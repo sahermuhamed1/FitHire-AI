@@ -3,6 +3,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from app.utils.db_utils import get_db
 
+import pandas as pd
+
 class JobMatcher:
     def __init__(self):
         self.vectorizer = TfidfVectorizer(stop_words='english')
