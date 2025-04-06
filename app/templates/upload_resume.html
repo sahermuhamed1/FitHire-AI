@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Resume - AI Resume Matcher{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">Upload Your Resume</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" class="p-3">
+                    <div class="mb-4">
+                        <p>Upload your resume to find matching job opportunities. We'll analyze your skills, experience, and education to match you with the most relevant job listings.</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="resume" class="form-label">Select Resume File</label>
+                        <input type="file" class="form-control" id="resume" name="resume" accept=".pdf,.docx" required>
+                        <div class="form-text">Accepted formats: PDF, DOCX (Max size: 16MB)</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Upload and Analyze</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3 class="card-title mb-0">Why Upload Your Resume?</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>AI-Powered Analysis</strong>
+                                <p>Our system uses advanced NLP to analyze your resume</p>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Skill Extraction</strong>
+                                <p>We automatically identify your key skills and competencies</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <strong>Intelligent Matching</strong>
+                                <p>Get matched with jobs that align with your profile</p>
+                            </li>
+                            <li class="list-group-item">
+                                <strong>Privacy Focused</strong>
+                                <p>Your data is processed securely and not shared with third parties</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
