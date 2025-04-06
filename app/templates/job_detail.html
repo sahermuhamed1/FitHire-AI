@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} - Job Details{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('main.dashboard') }}">Job Matches</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Job Details</li>
+            </ol>
+        </nav>
+        
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title mb-0">{{ job.title }}</h2>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h5 class="text-muted">{{ job.company }}</h5>
+                    <p><i class="bi bi-geo-alt"></i> {{ job.location }}</p>
+                    <p><small class="text-muted">Posted on {{ job.created.strftime('%B %d, %Y') if job.created else 'Unknown date' }}</small></p>
+                </div>
+                
+                <div class="mb-4">
+                    <h4>Job Description</h4>
+                    <p>{{ job.description|replace('\n', '<br>')|safe }}</p>
+                </div>
+                
+                {% if job.skills_required %}
+                <div class="mb-4">
+                    <h4>Required Skills</h4>
+                    <div>
+                        {% for skill in job.skills_required.split(',') %}
+                            <span class="badge {% if resume_features and skill.strip().lower() in resume_features.skills|map('lower') %}bg-success{% else %}bg-light text-dark{% endif %} me-1 mb-1 p-2">
+                                {{ skill.strip() }}
+                                {% if resume_features and skill.strip().lower() in resume_features.skills|map('lower') %}
+                                    <i class="bi bi-check-circle-fill ms-1"></i>
+                                {% endif %}
+                            </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">Back to Matches</a>
+                    <!-- In a real application, you'd link to an apply page or external job site here -->
+                    <button class="btn btn-primary" disabled>Apply for Job</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if resume_features %}
+    <div class="col-lg-4">
+        <div class="card sticky-top" style="top: 1rem;">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">Match Details</h3>
+            </div>
+            <div class="card-body">
+                {% if job.match_score is defined %}
+                <div class="text-center mb-4">
+                    <div class="display-4 fw-bold 
+                        {% if job.match_score >= 80 %}text-success
+                        {% elif job.match_score >= 60 %}text-info
+                        {% elif job.match_score >= 40 %}text-warning
+                        {% else %}text-secondary{% endif %}">
+                        {{ job.match_score }}%
+                    </div>
+                    <p>Match Score</p>
+                </div>
+                {% endif %}
+                
+                <h5>Your Skills</h5>
+                <div class="mb-3">
+                    {% if resume_features.skills %}
+                        {% for skill in resume_features.skills %}
+                            <span class="badge 
+                                {% if job.skills_required and skill.lower() in job.skills_required|lower %}bg-success
+                                {% else %}bg-secondary{% endif %} 
+                                me-1 mb-1">{{ skill }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted">No skills detected</p>
+                    {% endif %}
+                </div>
+                
+                <div class="alert alert-info">
+                    <small><i class="bi bi-info-circle"></i> Highlighted skills match this job's requirements</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
