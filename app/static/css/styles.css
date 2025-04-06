@@ -1,0 +1,53 @@
+/* Custom styles for AI Resume Matcher */
+
+/* General styling */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+/* Card enhancements */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.card-header:first-child {
+    border-radius: calc(0.5rem - 1px) calc(0.5rem - 1px) 0 0;
+}
+
+/* Match score styling */
+.match-score-high {
+    color: #28a745;
+}
+
+.match-score-medium {
+    color: #17a2b8;
+}
+
+.match-score-low {
+    color: #ffc107;
+}
+
+/* Skills badges */
+.badge {
+    font-weight: 500;
+    padding: 0.5em 0.75em;
+}
+
+/* Form controls */
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Resume analysis sidebar */
+.sticky-top {
+    z-index: 1020;
+}
