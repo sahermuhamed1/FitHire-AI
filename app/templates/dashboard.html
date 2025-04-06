@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Job Matches - AI Resume Matcher{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card sticky-top" style="top: 1rem;">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">Your Resume Analysis</h3>
+            </div>
+            <div class="card-body">
+                <h5>Detected Skills</h5>
+                {% if resume_features.skills %}
+                    <div class="mb-3">
+                        {% for skill in resume_features.skills %}
+                            <span class="badge bg-secondary me-1 mb-1">{{ skill }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No skills detected</p>
+                {% endif %}
+                
+                <h5>Education</h5>
+                {% if resume_features.education %}
+                    <ul class="list-group list-group-flush mb-3">
+                        {% for edu in resume_features.education %}
+                            <li class="list-group-item">{{ edu }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No education details detected</p>
+                {% endif %}
+                
+                <h5>Experience</h5>
+                {% if resume_features.years_of_experience > 0 %}
+                    <p>Approximately {{ resume_features.years_of_experience }} years of experience detected</p>
+                {% else %}
+                    <p class="text-muted">Years of experience not detected</p>
+                {% endif %}
+                
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{{ url_for('main.upload_resume') }}" class="btn btn-outline-primary">Upload Different Resume</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-8">
+        <h2 class="mb-3">Your Job Matches</h2>
+        
+        {% if job_matches %}
+            <p class="text-muted mb-4">We found {{ job_matches|length }} job positions that match your profile. Jobs are ranked by relevance to your resume.</p>
+            
+            {% for job in job_matches %}
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">{{ job.title }}</h5>
+                        <span class="badge {% if job.match_score >= 80 %}bg-success{% elif job.match_score >= 60 %}bg-info{% elif job.match_score >= 40 %}bg-warning{% else %}bg-secondary{% endif %}">
+                            {{ job.match_score }}% Match
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-2 text-muted">{{ job.company }} • {{ job.location }}</h6>
+                        
+                        <p class="card-text">{{ job.description[:200] }}{% if job.description|length > 200 %}...{% endif %}</p>
+                        
+                        {% if job.skills_required %}
+                            <div class="mb-3">
+                                <small class="text-muted">Required skills: </small>
+                                {% for skill in job.skills_required.split(',') %}
+                                    <span class="badge {% if skill.strip().lower() in resume_features.skills|map('lower') %}bg-success{% else %}bg-light text-dark{% endif %} me-1">{{ skill.strip() }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <a href="{{ url_for('main.job_detail', job_id=job.id) }}" class="btn btn-sm btn-primary">View Details</a>
+                    </div>
+                </div>
+            {% endfor %}
+            
+        {% else %}
+            <div class="alert alert-info">
+                <h4 class="alert-heading">No matches found!</h4>
+                <p>We couldn't find any jobs that match your resume. Please try again with a different resume or check back later as new job listings are added.</p>
+                <a href="{{ url_for('main.upload_resume') }}" class="btn btn-info">Upload a Different Resume</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
