@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Resume Matcher - Home{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <h1 class="display-4 mb-4">Welcome to AI Resume Matcher</h1>
+        <p class="lead">Find the perfect job match for your skills and experience using our advanced NLP-powered matching system.</p>
+        
+        <div class="card mt-5">
+            <div class="card-body">
+                <h2 class="card-title">How It Works</h2>
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <h3><i class="bi bi-upload"></i> 1</h3>
+                            <h5>Upload Your Resume</h5>
+                            <p>Submit your resume in PDF or DOCX format.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <h3><i class="bi bi-cpu"></i> 2</h3>
+                            <h5>AI Analysis</h5>
+                            <p>Our AI extracts your skills and experience.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3">
+                            <h3><i class="bi bi-check-circle"></i> 3</h3>
+                            <h5>Get Matched</h5>
+                            <p>Receive a ranked list of job matches.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-5">
+            <a href="{{ url_for('main.upload_resume') }}" class="btn btn-primary btn-lg px-4 me-2">
+                Upload Your Resume
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
