@@ -8,6 +8,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app import create_app
 from app.utils.linkedin_scraper import LinkedInScraper
+from app.utils.indeed_scraper import IndeedScraper
+from app.utils.glassdoor_scraper import GlassdoorScraper
 from app.utils.db_utils import get_db
 
 logging.basicConfig(
@@ -26,8 +28,12 @@ def scrape_and_save_jobs():
     app = create_app()
     with app.app_context():
         try:
-            # Initialize scraper
-            scraper = LinkedInScraper()
+            # Initialize all scrapers
+            scrapers = {
+                'linkedin': LinkedInScraper(),
+                'indeed': IndeedScraper(),
+                'glassdoor': GlassdoorScraper()
+            }
             
             # Define search parameters
             search_queries = [
@@ -42,34 +48,44 @@ def scrape_and_save_jobs():
             for query in search_queries:
                 logger.info(f"Searching for: {query['keywords']} in {query['location']}")
                 
-                jobs = scraper.scrape_jobs(
-                    keywords=query['keywords'],
-                    location=query['location'],
-                    num_jobs=20  # Fetch 20 jobs per query to get 60 total
-                )
-                
-                # Insert jobs into database
-                for job in jobs:
+                # Try each scraper
+                for scraper_name, scraper in scrapers.items():
                     try:
-                        db.execute('''
-                            INSERT INTO jobs (title, company, description, location, application_link, created)
-                            VALUES (?, ?, ?, ?, ?, ?)
-                            ON CONFLICT(application_link) DO NOTHING
-                        ''', (
-                            job['title'],
-                            job['company'],
-                            job['description'],
-                            job['location'],
-                            job['application_link'],
-                            datetime.now()
-                        ))
-                        total_jobs += 1
+                        logger.info(f"Using {scraper_name} scraper...")
+                        jobs = scraper.scrape_jobs(
+                            keywords=query['keywords'],
+                            location=query['location'],
+                            num_jobs=7  # Fetch 7 jobs per scraper to get ~20 total per query
+                        )
+                        
+                        # Insert jobs into database
+                        for job in jobs:
+                            try:
+                                db.execute('''
+                                    INSERT INTO jobs (title, company, description, location, 
+                                                    application_link, posted_date, source)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                                    ON CONFLICT(application_link) DO NOTHING
+                                ''', (
+                                    job['title'],
+                                    job['company'],
+                                    job['description'],
+                                    job['location'],
+                                    job['application_link'],
+                                    job['posted_date'],
+                                    job['source']
+                                ))
+                                total_jobs += 1
+                            except Exception as e:
+                                logger.error(f"Error inserting job: {e}")
+                                continue
+                        
+                        db.commit()
+                        logger.info(f"Saved {len(jobs)} jobs from {scraper_name}")
+                        
                     except Exception as e:
-                        logger.error(f"Error inserting job: {e}")
+                        logger.error(f"Error with {scraper_name} scraper: {e}")
                         continue
-                
-                db.commit()
-                logger.info(f"Saved {len(jobs)} jobs from current query")
             
             logger.info(f"Scraping completed. Total jobs saved: {total_jobs}")
             

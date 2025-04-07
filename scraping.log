@@ -21,3 +21,66 @@ with app.app_context(). See the documentation for more information.
 2025-04-07 17:14:24,458 INFO: Searching for: full stack developer in United States
 2025-04-07 17:16:02,706 INFO: Saved 20 jobs from current query
 2025-04-07 17:16:02,706 INFO: Scraping completed. Total jobs saved: 60
+2025-04-07 17:33:47,528 INFO: Starting job scraping process
+2025-04-07 17:33:50,282 INFO: Searching for: software engineer in United States
+2025-04-07 17:33:52,227 INFO: Saved 0 jobs from current query
+2025-04-07 17:33:52,227 INFO: Searching for: data scientist in United States
+2025-04-07 17:33:53,841 INFO: Saved 0 jobs from current query
+2025-04-07 17:33:53,841 INFO: Searching for: full stack developer in United States
+2025-04-07 17:33:55,288 INFO: Saved 0 jobs from current query
+2025-04-07 17:33:55,288 INFO: Scraping completed. Total jobs saved: 0
+2025-04-07 17:35:20,865 INFO: Starting job scraping process
+2025-04-07 17:35:23,545 INFO: Searching for: software engineer in United States
+2025-04-07 17:35:25,203 INFO: Saved 0 jobs from current query
+2025-04-07 17:35:25,203 INFO: Searching for: data scientist in United States
+2025-04-07 17:35:27,021 INFO: Saved 0 jobs from current query
+2025-04-07 17:35:27,022 INFO: Searching for: full stack developer in United States
+2025-04-07 17:35:28,336 INFO: Saved 0 jobs from current query
+2025-04-07 17:35:28,336 INFO: Scraping completed. Total jobs saved: 0
+2025-04-07 17:37:33,372 INFO: Starting job scraping process
+2025-04-07 17:37:50,211 INFO: Searching for: software engineer in United States
+2025-04-07 17:37:50,212 INFO: Using linkedin scraper...
+2025-04-07 17:37:51,983 INFO: Saved 0 jobs from linkedin
+2025-04-07 17:37:51,983 INFO: Using indeed scraper...
+2025-04-07 17:38:04,557 INFO: Saved 0 jobs from indeed
+2025-04-07 17:38:04,557 INFO: Using glassdoor scraper...
+2025-04-07 17:38:18,342 INFO: Saved 0 jobs from glassdoor
+2025-04-07 17:38:18,342 INFO: Searching for: data scientist in United States
+2025-04-07 17:38:18,342 INFO: Using linkedin scraper...
+2025-04-07 17:38:19,865 INFO: Saved 0 jobs from linkedin
+2025-04-07 17:38:19,865 INFO: Using indeed scraper...
+2025-04-07 17:38:23,955 WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEAAF6B10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/30a09d4235818767c66bd716bf610617/url
+2025-04-07 17:38:28,047 WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CE7E0D790>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/30a09d4235818767c66bd716bf610617/url
+2025-04-07 17:38:32,150 WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CE8E41A60>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/30a09d4235818767c66bd716bf610617/url
+2025-04-07 17:38:40,381 WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CE8E432F0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/30a09d4235818767c66bd716bf610617
+2025-04-07 17:38:44,510 WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CE8E436B0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/30a09d4235818767c66bd716bf610617
+2025-04-07 17:38:48,599 WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CE8E43800>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/30a09d4235818767c66bd716bf610617
+2025-04-07 17:38:52,687 INFO: Saved 0 jobs from indeed
+2025-04-07 17:38:52,687 INFO: Using glassdoor scraper...
+2025-04-07 17:38:56,785 WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC3140B0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d11e70821728b80f151217d9b4a7bb12/url
+2025-04-07 17:39:00,900 WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC314320>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d11e70821728b80f151217d9b4a7bb12/url
+2025-04-07 17:39:04,998 WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC314560>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d11e70821728b80f151217d9b4a7bb12/url
+2025-04-07 17:39:13,167 WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CE8E43650>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d11e70821728b80f151217d9b4a7bb12
+2025-04-07 17:39:17,259 WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CE8E40B60>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d11e70821728b80f151217d9b4a7bb12
+2025-04-07 17:39:21,348 WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CE8E432F0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d11e70821728b80f151217d9b4a7bb12
+2025-04-07 17:39:25,457 INFO: Saved 0 jobs from glassdoor
+2025-04-07 17:39:25,457 INFO: Searching for: full stack developer in United States
+2025-04-07 17:39:25,457 INFO: Using linkedin scraper...
+2025-04-07 17:39:26,768 INFO: Saved 0 jobs from linkedin
+2025-04-07 17:39:26,768 INFO: Using indeed scraper...
+2025-04-07 17:39:30,880 WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEAAF6D80>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/30a09d4235818767c66bd716bf610617/url
+2025-04-07 17:39:35,000 WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC315A90>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/30a09d4235818767c66bd716bf610617/url
+2025-04-07 17:39:39,095 WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC314710>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/30a09d4235818767c66bd716bf610617/url
+2025-04-07 17:39:47,313 WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC314A10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/30a09d4235818767c66bd716bf610617
+2025-04-07 17:39:51,423 WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC3148F0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/30a09d4235818767c66bd716bf610617
+2025-04-07 17:39:55,511 WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC314D40>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/30a09d4235818767c66bd716bf610617
+2025-04-07 17:39:59,634 INFO: Saved 0 jobs from indeed
+2025-04-07 17:39:59,635 INFO: Using glassdoor scraper...
+2025-04-07 17:40:03,726 WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC660080>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d11e70821728b80f151217d9b4a7bb12/url
+2025-04-07 17:40:07,818 WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC660260>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d11e70821728b80f151217d9b4a7bb12/url
+2025-04-07 17:40:11,927 WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC660440>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d11e70821728b80f151217d9b4a7bb12/url
+2025-04-07 17:40:20,118 WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC660830>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d11e70821728b80f151217d9b4a7bb12
+2025-04-07 17:40:24,240 WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC660A10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d11e70821728b80f151217d9b4a7bb12
+2025-04-07 17:40:28,333 WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPConnection object at 0x0000014CEC633D40>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /session/d11e70821728b80f151217d9b4a7bb12
+2025-04-07 17:40:32,443 INFO: Saved 0 jobs from glassdoor
+2025-04-07 17:40:32,443 INFO: Scraping completed. Total jobs saved: 0

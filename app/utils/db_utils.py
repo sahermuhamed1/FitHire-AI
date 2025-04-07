@@ -23,26 +23,22 @@ def close_db(e=None):
         db.close()
 
 def init_db():
-    """Initialize the database."""
+    """Initialize the database and create tables."""
+    db = get_db()
+    
     try:
-        db = get_db()
-        
         # Read schema from file
         with current_app.open_resource('schema.sql') as f:
             db.executescript(f.read().decode('utf8'))
-        
-        # Add sample job data
-        try:
-            add_sample_jobs(db)
-        except Exception as e:
-            print(f"Warning: Could not add sample jobs: {e}")
-            # Fallback to sample data if scraping fails
-            add_fallback_sample_jobs(db)
             
-        print("Database initialized successfully!")
-        
+        # Add sample jobs if none exist
+        if not db.execute('SELECT * FROM jobs LIMIT 1').fetchone():
+            add_sample_jobs(db)
+            
+        db.commit()
+        current_app.logger.info("Database initialized successfully")
     except Exception as e:
-        print(f"Error initializing database: {e}")
+        current_app.logger.error(f"Error initializing database: {e}")
         raise
 
 def get_filtered_jobs(source=None, days=None):
@@ -129,3 +125,6 @@ def init_app(app):
     """Register database functions with the Flask app."""
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+    # Initialize database when app starts
+    with app.app_context():
+        init_db()

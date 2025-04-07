@@ -33,6 +33,11 @@ def run(env):
     app = create_app(config[env])
     setup_logging(app)
     
+    # Initialize database on startup
+    with app.app_context():
+        from app.utils.db_utils import init_db
+        init_db()
+    
     if env == 'production':
         from waitress import serve
         app.logger.info('Starting production server...')
