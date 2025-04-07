@@ -1,0 +1,6 @@
+2025-04-07 17:02:58,069 INFO: Starting job scraping process
+2025-04-07 17:02:58,069 ERROR: Scraping failed: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.

@@ -7,6 +7,8 @@ CREATE TABLE jobs (
     description TEXT NOT NULL,
     location TEXT,
     skills_required TEXT,
-    application_link TEXT,
+    application_link TEXT UNIQUE,
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE INDEX IF NOT EXISTS idx_jobs_application_link ON jobs(application_link);

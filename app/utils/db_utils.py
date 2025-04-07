@@ -31,7 +31,37 @@ def init_db():
     add_sample_jobs(db)
 
 def add_sample_jobs(db):
-    # Sample job data
+    from app.utils.linkedin_scraper import LinkedInScraper
+    
+    # Check if jobs table is empty before inserting data
+    if db.execute('SELECT COUNT(*) FROM jobs').fetchone()[0] == 0:
+        try:
+            # Scrape jobs from LinkedIn
+            scraper = LinkedInScraper()
+            jobs = scraper.scrape_jobs(
+                keywords="software engineer OR data scientist OR developer",
+                location="United States",
+                num_jobs=50
+            )
+            
+            # Insert scraped jobs into database
+            for job in jobs:
+                db.execute(
+                    'INSERT INTO jobs (title, company, description, location, application_link)'
+                    ' VALUES (?, ?, ?, ?, ?)',
+                    (job['title'], job['company'], job['description'], 
+                     job['location'], job['application_link'])
+                )
+            db.commit()
+            print(f"Added {len(jobs)} jobs from LinkedIn")
+            
+        except Exception as e:
+            print(f"Error adding LinkedIn jobs: {e}")
+            # Fallback to sample data if scraping fails
+            add_fallback_sample_jobs(db)
+    
+def add_fallback_sample_jobs(db):
+    # Your existing sample jobs code here
     sample_jobs = [
         ('Software Engineer', 'TechCorp Inc.', 'We are looking for a software engineer with experience in Python, Flask, and SQL. The ideal candidate will have 3+ years of experience in web development and be comfortable working in a fast-paced environment.', 'San Francisco, CA', 'Python, Flask, SQL, Git'),
         ('Data Scientist', 'DataAnalytics Co.', 'Seeking a data scientist with strong background in machine learning, NLP, and data visualization. Must be proficient in Python, PyTorch or TensorFlow, and have experience with large datasets.', 'Remote', 'Python, ML, NLP, PyTorch, SQL'),
@@ -45,15 +75,13 @@ def add_sample_jobs(db):
         ('Machine Learning Engineer', 'ML Technologies', 'Machine learning engineer needed to develop and deploy ML models. Experience with Python, scikit-learn, and model deployment required.', 'Denver, CO', 'Python, scikit-learn, TensorFlow, ML Ops')
     ]
     
-    # Check if jobs table is empty before inserting sample data
-    if db.execute('SELECT COUNT(*) FROM jobs').fetchone()[0] == 0:
-        for job in sample_jobs:
-            db.execute(
-                'INSERT INTO jobs (title, company, description, location, skills_required)'
-                ' VALUES (?, ?, ?, ?, ?)',
-                job
-            )
-        db.commit()
+    for job in sample_jobs:
+        db.execute(
+            'INSERT INTO jobs (title, company, description, location, skills_required)'
+            ' VALUES (?, ?, ?, ?, ?)',
+            job
+        )
+    db.commit()
 
 @click.command('init-db')
 @with_appcontext
