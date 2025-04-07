@@ -34,6 +34,7 @@ logs/
 *.log
 
 # Virtual Environment
+fit_hire_env/
 venv/
 ENV/
 env/
