@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from flask_session import Session
+from flask_session import Session  # This import will now work correctly
 from flask_cors import CORS
 
 def create_app(config_class=None):
