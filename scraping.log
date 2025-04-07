@@ -4,3 +4,14 @@
 This typically means that you attempted to use functionality that needed
 the current application. To solve this, set up an application context
 with app.app_context(). See the documentation for more information.
+2025-04-07 17:06:18,268 INFO: Starting job scraping process
+2025-04-07 17:06:21,059 INFO: Searching for: software engineer in United States
+2025-04-07 17:06:38,719 ERROR: Error scraping job: 'NoneType' object has no attribute 'text'
+2025-04-07 17:07:52,115 INFO: Saved 20 jobs from current query
+2025-04-07 17:07:52,115 INFO: Searching for: data scientist in United States
+2025-04-07 17:09:38,938 INFO: Saved 20 jobs from current query
+2025-04-07 17:09:38,939 INFO: Searching for: full stack developer in United States
+2025-04-07 17:10:57,771 INFO: Starting job scraping process
+2025-04-07 17:11:00,568 INFO: Searching for: software engineer in United States
+2025-04-07 17:11:17,603 INFO: Saved 20 jobs from current query
+2025-04-07 17:11:17,603 INFO: Scraping completed. Total jobs saved: 60
