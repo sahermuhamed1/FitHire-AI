@@ -4,7 +4,7 @@ class ManualProcessor:
         self.clean_data()
         
     def clean_data(self):
-        """Clean and normalize manual entry data"""
+        # Clean and normalize manual entry data
         # Clean skills
         self.manual_data['skills'] = [
             skill.strip().lower() 
@@ -26,7 +26,7 @@ class ManualProcessor:
             self.manual_data['years_of_experience'] = 0
             
     def extract_features(self):
-        """Return features in same format as ResumeProcessor"""
+        # Return features in same format as ResumeProcessor
         return {
             'skills': self.manual_data['skills'],
             'education': self.manual_data['education'],
@@ -34,7 +34,7 @@ class ManualProcessor:
         }
         
     def generate_text(self):
-        """Generate searchable text from manual data"""
+        # Generate searchable text from manual data
         sections = []
         
         # Add job title and industry

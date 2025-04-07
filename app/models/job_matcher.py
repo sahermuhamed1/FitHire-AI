@@ -10,12 +10,11 @@ class JobMatcher:
         self.vectorizer = TfidfVectorizer(stop_words='english')
         
     def preprocess_for_matching(self, text):
-        """Prepare text for TF-IDF vectorization"""
         # Basic preprocessing is already done in ResumeProcessor
         return text
         
     def find_matches(self, resume_text, resume_features=None, top_n=10):
-        """Find matching jobs based on resume text and extracted features"""
+        # Find matching jobs based on resume text and extracted features
         import logging
         logger = logging.getLogger(__name__)
         
@@ -65,7 +64,7 @@ class JobMatcher:
         return job_matches
         
     def get_job_by_id(self, job_id):
-        """Retrieve a specific job by ID"""
+        # Retrieve a specific job by ID
         db = get_db()
         job = db.execute('SELECT * FROM jobs WHERE id = ?', (job_id,)).fetchone()
         if job:
