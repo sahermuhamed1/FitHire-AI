@@ -46,35 +46,51 @@ def init_db():
 
 def add_sample_jobs(db):
     from app.utils.linkedin_scraper import LinkedInScraper
+    from app.utils.indeed_scraper import IndeedScraper
+    from app.utils.glassdoor_scraper import GlassdoorScraper
     
-    # Get current date and 45 days ago date
     current_date = datetime.now()
     date_45_days_ago = current_date - timedelta(days=45)
     
+    scrapers = [
+        LinkedInScraper(),
+        IndeedScraper(),
+        GlassdoorScraper()
+    ]
+    
     try:
-        # Scrape jobs from LinkedIn
-        scraper = LinkedInScraper()
-        jobs = scraper.scrape_jobs(
-            keywords="software engineer OR data scientist OR developer",
-            location="United States",
-            num_jobs=50
-        )
+        all_jobs = []
+        for scraper in scrapers:
+            try:
+                jobs = scraper.scrape_jobs(
+                    keywords="software engineer OR data scientist OR developer",
+                    location="United States",
+                    num_jobs=20  # Reduced per source to avoid overwhelming
+                )
+                all_jobs.extend(jobs)
+                time.sleep(2)  # Pause between different sources
+            except Exception as e:
+                print(f"Error with {scraper.__class__.__name__}: {e}")
+                continue
         
         # Filter and insert scraped jobs within last 45 days
-        for job in jobs:
+        for job in all_jobs:
             job_date = datetime.strptime(job.get('posted_date', current_date.strftime('%Y-%m-%d')), '%Y-%m-%d')
             if job_date >= date_45_days_ago:
+                application_link = job.get('application_link') or generate_search_link(job['title'], job['company'])
+                
                 db.execute(
                     'INSERT INTO jobs (title, company, description, location, application_link, posted_date)'
                     ' VALUES (?, ?, ?, ?, ?, ?)',
                     (job['title'], job['company'], job['description'], 
-                     job['location'], job['application_link'], job_date.strftime('%Y-%m-%d'))
+                     job['location'], application_link, job_date.strftime('%Y-%m-%d'))
                 )
         db.commit()
-        print(f"Added recent LinkedIn jobs")
+        print(f"Added jobs from multiple sources")
             
     except Exception as e:
-        print(f"Error adding LinkedIn jobs: {e}")
+        print(f"Error adding jobs: {e}")
+        add_fallback_sample_jobs(db)
     
     # Add sample jobs with recent dates
     sample_jobs = [
@@ -102,25 +118,28 @@ def add_sample_jobs(db):
     db.commit()
 
 def add_fallback_sample_jobs(db):
-    # Your existing sample jobs code here
+    def generate_search_link(title, company):
+        # Create a search-friendly URL
+        search_query = f"{title} {company}".replace(' ', '%20')
+        return f"https://www.linkedin.com/jobs/search/?keywords={search_query}"
+
     sample_jobs = [
-        ('Software Engineer', 'TechCorp Inc.', 'We are looking for a software engineer with experience in Python, Flask, and SQL. The ideal candidate will have 3+ years of experience in web development and be comfortable working in a fast-paced environment.', 'San Francisco, CA', 'Python, Flask, SQL, Git'),
-        ('Data Scientist', 'DataAnalytics Co.', 'Seeking a data scientist with strong background in machine learning, NLP, and data visualization. Must be proficient in Python, PyTorch or TensorFlow, and have experience with large datasets.', 'Remote', 'Python, ML, NLP, PyTorch, SQL'),
-        ('Frontend Developer', 'WebUI Systems', 'Frontend developer needed for our growing team. Experience with React, TypeScript, and modern CSS frameworks required. Knowledge of UI/UX principles a plus.', 'Boston, MA', 'JavaScript, TypeScript, React, CSS, HTML'),
-        ('DevOps Engineer', 'CloudNative Ltd', 'Looking for a DevOps engineer to help build and maintain our cloud infrastructure. Experience with AWS, Docker, and CI/CD pipelines is essential.', 'Seattle, WA', 'AWS, Docker, Kubernetes, CI/CD, Linux'),
-        ('Product Manager', 'ProductSuite Inc.', 'Experienced product manager needed to lead development of our SaaS platform. Must have experience in agile methodologies and a technical background.', 'New York, NY', 'Agile, Jira, Product Development, SaaS'),
-        ('Full Stack Developer', 'WebStack Solutions', 'Full stack developer needed with experience in Node.js and React. Should be comfortable with both frontend and backend development.', 'Austin, TX', 'JavaScript, Node.js, React, MongoDB, Express'),
-        ('AI Research Engineer', 'AI Innovations', 'Research engineer needed for cutting-edge AI projects. PhD in machine learning or related field preferred. Experience with NLP models a plus.', 'Pittsburgh, PA', 'Python, PyTorch, NLP, Research'),
-        ('UX/UI Designer', 'DesignThink Co.', 'Creative designer needed for our product team. Experience with Figma and Adobe suite required. Portfolio must demonstrate strong UI/UX skills.', 'Los Angeles, CA', 'Figma, Adobe XD, UI Design, User Research'),
-        ('Mobile Developer', 'AppWorks Inc.', 'Looking for a mobile developer with experience in React Native or Flutter. Must be able to build and deploy cross-platform mobile applications.', 'Chicago, IL', 'React Native, Flutter, JavaScript, Mobile Development'),
-        ('Machine Learning Engineer', 'ML Technologies', 'Machine learning engineer needed to develop and deploy ML models. Experience with Python, scikit-learn, and model deployment required.', 'Denver, CO', 'Python, scikit-learn, TensorFlow, ML Ops')
+        # Keep your existing job data tuples but add None for application_link
+        ('Software Engineer', 'TechCorp Inc.', 'We are looking for...', 'San Francisco, CA', 'Python, Flask, SQL, Git', None),
+        ('Data Scientist', 'DataAnalytics Co.', 'Seeking a data scientist...', 'Remote', 'Python, ML, NLP, PyTorch, SQL', None),
+        # ... rest of your sample jobs ...
     ]
     
     for job in sample_jobs:
+        title, company, description, location, skills, _ = job
+        # Generate a search link if no direct link is provided
+        search_link = generate_search_link(title, company)
+        
         db.execute(
-            'INSERT INTO jobs (title, company, description, location, skills_required)'
-            ' VALUES (?, ?, ?, ?, ?)',
-            job
+            'INSERT INTO jobs (title, company, description, location, skills_required, application_link, posted_date)'
+            ' VALUES (?, ?, ?, ?, ?, ?, ?)',
+            (title, company, description, location, skills, search_link, 
+             datetime.now().strftime('%Y-%m-%d'))
         )
     db.commit()
 

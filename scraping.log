@@ -15,3 +15,9 @@ with app.app_context(). See the documentation for more information.
 2025-04-07 17:11:00,568 INFO: Searching for: software engineer in United States
 2025-04-07 17:11:17,603 INFO: Saved 20 jobs from current query
 2025-04-07 17:11:17,603 INFO: Scraping completed. Total jobs saved: 60
+2025-04-07 17:12:42,472 INFO: Saved 20 jobs from current query
+2025-04-07 17:12:42,473 INFO: Searching for: data scientist in United States
+2025-04-07 17:14:24,458 INFO: Saved 20 jobs from current query
+2025-04-07 17:14:24,458 INFO: Searching for: full stack developer in United States
+2025-04-07 17:16:02,706 INFO: Saved 20 jobs from current query
+2025-04-07 17:16:02,706 INFO: Scraping completed. Total jobs saved: 60
