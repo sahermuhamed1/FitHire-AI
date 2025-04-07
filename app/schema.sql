@@ -7,5 +7,6 @@ CREATE TABLE jobs (
     description TEXT NOT NULL,
     location TEXT,
     skills_required TEXT,
+    application_link TEXT,
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

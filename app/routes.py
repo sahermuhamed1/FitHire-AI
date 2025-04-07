@@ -122,6 +122,7 @@ def upload_jobs():
         description = request.form['description']
         location = request.form['location']
         skills_required = request.form['skills_required']
+        application_link = request.form['application_link']
         
         # Basic validation
         error = None
@@ -135,9 +136,9 @@ def upload_jobs():
         else:
             db = db_utils.get_db()
             db.execute(
-                'INSERT INTO jobs (title, company, description, location, skills_required)'
-                ' VALUES (?, ?, ?, ?, ?)',
-                (title, company, description, location, skills_required)
+                'INSERT INTO jobs (title, company, description, location, skills_required, application_link)'
+                ' VALUES (?, ?, ?, ?, ?, ?)',
+                (title, company, description, location, skills_required, application_link)
             )
             db.commit()
             flash('Job added successfully!')
