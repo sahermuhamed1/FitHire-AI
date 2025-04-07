@@ -1,10 +1,12 @@
 import os
 from flask import Flask
 from config import Config
+from flask_session import Session
 
 def create_app(test_config=None):
     # Create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    app.config['SESSION_TYPE'] = 'filesystem'
     app.config.from_object(Config)
     
     if test_config:
@@ -25,5 +27,8 @@ def create_app(test_config=None):
     # Initialize database
     from app.utils import db_utils
     db_utils.init_app(app)
+    
+    # Initialize Flask-Session
+    Session(app)
     
     return app

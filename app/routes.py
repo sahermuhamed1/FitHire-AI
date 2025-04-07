@@ -27,48 +27,61 @@ def home():
 @bp.route('/upload_resume', methods=('GET', 'POST'))
 def upload_resume():
     if request.method == 'POST':
-        # Check if the post request has the file part
-        if 'resume' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['resume']
-        
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
+        try:
+            # Check if the post request has the file part
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
             
-        if file and allowed_file(file.filename):
-            # Generate unique filename to prevent overwrites
-            unique_filename = str(uuid.uuid4()) + "_" + secure_filename(file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
-            file.save(file_path)
-            
-            # Process resume
-            resume_processor = ResumeProcessor(file_path)
-            resume_text = resume_processor.extract_text()
-            resume_features = resume_processor.extract_features()
-            
-            # Store in session for use on next page
-            session['resume_text'] = resume_text
-            session['resume_features'] = resume_features
-            session['resume_path'] = file_path
-            
-            # Match with jobs
-            job_matcher = JobMatcher()
-            job_matches = job_matcher.find_matches(resume_text, resume_features)
-            
-            # Store match results in session
-            session['job_matches'] = job_matches
-            
-            return redirect(url_for('main.dashboard'))
-            
-        else:
+            # If the user does not select a file, the browser submits an
+            # empty file without a filename.
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+                
+            if file and allowed_file(file.filename):
+                # Generate unique filename to prevent overwrites
+                unique_filename = str(uuid.uuid4()) + "_" + secure_filename(file.filename)
+                file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_filename)
+                
+                # Ensure upload directory exists
+                os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                
+                file.save(file_path)
+                
+                current_app.logger.info(f"File saved at: {file_path}")
+                
+                # Process resume
+                resume_processor = ResumeProcessor(file_path)
+                resume_text = resume_processor.extract_text()
+                resume_features = resume_processor.extract_features()
+                
+                # Store in session
+                session.permanent = True
+                session['resume_text'] = resume_text
+                session['resume_features'] = resume_features
+                session['resume_path'] = file_path
+                
+                # Match with jobs
+                job_matcher = JobMatcher()
+                job_matches = job_matcher.find_matches(resume_text, resume_features)
+                
+                # Store match results in session
+                session['job_matches'] = job_matches
+                
+                return redirect(url_for('main.dashboard'))
+                
             flash('File type not allowed. Please upload PDF or DOCX.')
             return redirect(request.url)
+                
+        except Exception as e:
+            import traceback
+            current_app.logger.error(f"Error in upload_resume: {str(e)}")
+            current_app.logger.error(traceback.format_exc())
+            flash(f"Error processing resume: {str(e)}")
+            return redirect(request.url)
             
-    # GET request - show the upload form
     return render_template('upload_resume.html')
 
 @bp.route('/dashboard')
@@ -76,6 +89,8 @@ def dashboard():
     # Retrieve saved job matches from session
     job_matches = session.get('job_matches', [])
     resume_features = session.get('resume_features', {})
+    
+    current_app.logger.info(f"Dashboard accessed. Found {len(job_matches)} job matches in session")
     
     if not job_matches:
         flash('Please upload your resume first')

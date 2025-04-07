@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-for-development')
@@ -11,3 +12,8 @@ class Config:
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     # Ensure instance directory exists
     os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'instance'), exist_ok=True)
+    
+    # Session configuration
+    SESSION_TYPE = 'filesystem'
+    SESSION_PERMANENT = True
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)

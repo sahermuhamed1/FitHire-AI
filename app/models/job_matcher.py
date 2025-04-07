@@ -16,10 +16,16 @@ class JobMatcher:
         
     def find_matches(self, resume_text, resume_features=None, top_n=10):
         """Find matching jobs based on resume text and extracted features"""
+        import logging
+        logger = logging.getLogger(__name__)
+        
         db = get_db()
         all_jobs = db.execute('SELECT * FROM jobs').fetchall()
         
+        logger.debug(f"Found {len(all_jobs)} jobs in database")
+        
         if not all_jobs:
+            logger.warning("No jobs found in database")
             return []
             
         # Prepare corpus for TF-IDF (resume + all job descriptions)
@@ -36,7 +42,9 @@ class JobMatcher:
         except ValueError as e:
             print(f"Error in TF-IDF calculation: {e}")
             return []
-            
+        
+        
+                
         # Calculate cosine similarity between resume and all jobs
         cosine_similarities = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:]).flatten()
         
@@ -67,6 +75,9 @@ class JobMatcher:
         job_matches.sort(key=lambda x: x['match_score'], reverse=True)
         
         # Return top N matches
+        logger.debug(f"Calculated {len(cosine_similarities)} similarity scores")
+        logger.debug(f"Returning {len(job_matches[:top_n])} job matches")
+        
         return job_matches[:top_n]
         
     def get_job_by_id(self, job_id):
