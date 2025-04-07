@@ -22,19 +22,6 @@ body {
     border-radius: calc(0.5rem - 1px) calc(0.5rem - 1px) 0 0;
 }
 
-/* Match score styling */
-.match-score-high {
-    color: #28a745;
-}
-
-.match-score-medium {
-    color: #17a2b8;
-}
-
-.match-score-low {
-    color: #ffc107;
-}
-
 /* Skills badges */
 .badge {
     font-weight: 500;

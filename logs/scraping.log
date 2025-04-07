@@ -143,3 +143,7 @@
 2025-04-07 18:16:42,163 INFO: Searching for: devops
 2025-04-07 18:17:06,419 INFO: Saved 50 new jobs for keyword: devops
 2025-04-07 18:17:06,419 INFO: Scraping completed. Total new jobs saved: 50
+2025-04-07 18:36:40,393 INFO: Starting LinkedIn job scraping for: Data Scientist in Egypt
+2025-04-07 18:36:43,130 INFO: Searching for: Data Scientist
+2025-04-07 18:37:02,002 INFO: Saved 10 new jobs for keyword: Data Scientist
+2025-04-07 18:37:02,003 INFO: Scraping completed. Total new jobs saved: 10

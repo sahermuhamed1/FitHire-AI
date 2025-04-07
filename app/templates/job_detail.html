@@ -33,11 +33,8 @@
                     <h4>Required Skills</h4>
                     <div>
                         {% for skill in job.skills_required.split(',') %}
-                            <span class="badge {% if resume_features and skill.strip().lower() in resume_features.skills|map('lower') %}bg-success{% else %}bg-light text-dark{% endif %} me-1 mb-1 p-2">
+                            <span class="badge bg-light text-dark me-1 mb-1 p-2">
                                 {{ skill.strip() }}
-                                {% if resume_features and skill.strip().lower() in resume_features.skills|map('lower') %}
-                                    <i class="bi bi-check-circle-fill ms-1"></i>
-                                {% endif %}
                             </span>
                         {% endfor %}
                     </div>
@@ -62,38 +59,18 @@
     <div class="col-lg-4">
         <div class="card sticky-top" style="top: 1rem;">
             <div class="card-header bg-primary text-white">
-                <h3 class="card-title mb-0">Match Details</h3>
+                <h3 class="card-title mb-0">Your Profile</h3>
             </div>
             <div class="card-body">
-                {% if job.match_score is defined %}
-                <div class="text-center mb-4">
-                    <div class="display-4 fw-bold 
-                        {% if job.match_score >= 80 %}text-success
-                        {% elif job.match_score >= 60 %}text-info
-                        {% elif job.match_score >= 40 %}text-warning
-                        {% else %}text-secondary{% endif %}">
-                        {{ job.match_score }}%
-                    </div>
-                    <p>Match Score</p>
-                </div>
-                {% endif %}
-                
                 <h5>Your Skills</h5>
                 <div class="mb-3">
                     {% if resume_features.skills %}
                         {% for skill in resume_features.skills %}
-                            <span class="badge 
-                                {% if job.skills_required and skill.lower() in job.skills_required|lower %}bg-success
-                                {% else %}bg-secondary{% endif %} 
-                                me-1 mb-1">{{ skill }}</span>
+                            <span class="badge bg-secondary me-1 mb-1">{{ skill }}</span>
                         {% endfor %}
                     {% else %}
                         <p class="text-muted">No skills detected</p>
                     {% endif %}
-                </div>
-                
-                <div class="alert alert-info">
-                    <small><i class="bi bi-info-circle"></i> Highlighted skills match this job's requirements</small>
                 </div>
             </div>
         </div>

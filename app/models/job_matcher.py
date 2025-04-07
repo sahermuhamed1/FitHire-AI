@@ -30,11 +30,14 @@ class JobMatcher:
             
         # Prepare corpus for TF-IDF (resume + all job descriptions)
         corpus = [self.preprocess_for_matching(resume_text)]
-        job_ids = []
+        jobs_with_scores = []
         
         for job in all_jobs:
             corpus.append(self.preprocess_for_matching(job['description']))
-            job_ids.append(job['id'])
+            jobs_with_scores.append({
+                'job': dict(job),
+                'score': 0  # Will be updated with similarity score
+            })
             
         # Calculate TF-IDF vectors
         try:
@@ -43,42 +46,23 @@ class JobMatcher:
             print(f"Error in TF-IDF calculation: {e}")
             return []
         
-        
-                
         # Calculate cosine similarity between resume and all jobs
         cosine_similarities = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:]).flatten()
         
-        # Enhanced scoring with skills matching if resume_features available
-        if resume_features and 'skills' in resume_features and resume_features['skills']:
-            resume_skills = set(skill.lower() for skill in resume_features['skills'])
-            
-            # Adjust scores based on skill matches
-            for i, job in enumerate(all_jobs):
-                if job['skills_required']:
-                    job_skills = set(skill.strip().lower() for skill in job['skills_required'].split(','))
-                    skill_matches = resume_skills.intersection(job_skills)
-                    
-                    # Boost score based on percentage of required skills matched
-                    if job_skills:
-                        skill_match_score = len(skill_matches) / len(job_skills)
-                        # Weight: 70% TF-IDF similarity, 30% skill matching
-                        cosine_similarities[i] = 0.7 * cosine_similarities[i] + 0.3 * skill_match_score
-        
-        # Create job entries with similarity scores
-        job_matches = []
+        # Update similarity scores
         for i, score in enumerate(cosine_similarities):
-            job = dict(all_jobs[i])
-            job['match_score'] = round(float(score * 100), 1)  # Convert to percentage
-            job_matches.append(job)
-            
-        # Sort by match score (descending)
-        job_matches.sort(key=lambda x: x['match_score'], reverse=True)
+            jobs_with_scores[i]['score'] = score
         
-        # Return top N matches
+        # Sort by similarity score (descending)
+        jobs_with_scores.sort(key=lambda x: x['score'], reverse=True)
+        
+        # Extract just the job data for the top N matches
+        job_matches = [item['job'] for item in jobs_with_scores[:top_n]]
+        
         logger.debug(f"Calculated {len(cosine_similarities)} similarity scores")
-        logger.debug(f"Returning {len(job_matches[:top_n])} job matches")
+        logger.debug(f"Returning {len(job_matches)} job matches")
         
-        return job_matches[:top_n]
+        return job_matches
         
     def get_job_by_id(self, job_id):
         """Retrieve a specific job by ID"""
