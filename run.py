@@ -30,13 +30,18 @@ def setup_logging(app):
               help='The environment to run the application in')
 def run(env):
     """Run the application with the specified environment."""
-    app = create_app(config[env])
+    config_class = config[env]
+    app = create_app(config_class)
     setup_logging(app)
     
     # Initialize database on startup
     with app.app_context():
         from app.utils.db_utils import init_db
-        init_db()
+        try:
+            init_db()
+            app.logger.info('Database initialized successfully')
+        except Exception as e:
+            app.logger.error(f'Error initializing database: {e}')
     
     if env == 'production':
         from waitress import serve

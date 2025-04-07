@@ -23,7 +23,7 @@ def close_db(e=None):
         db.close()
 
 def init_db():
-    """Initialize the database and create tables."""
+    """Initialize the database."""
     db = get_db()
     
     try:
@@ -32,8 +32,8 @@ def init_db():
             db.executescript(f.read().decode('utf8'))
             
         # Add sample jobs if none exist
-        if not db.execute('SELECT * FROM jobs LIMIT 1').fetchone():
-            add_sample_jobs(db)
+        if not db.execute('SELECT 1 FROM jobs LIMIT 1').fetchone():
+            add_fallback_sample_jobs(db)
             
         db.commit()
         current_app.logger.info("Database initialized successfully")
@@ -125,6 +125,13 @@ def init_app(app):
     """Register database functions with the Flask app."""
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
-    # Initialize database when app starts
+    
+    # Initialize database when app starts if table doesn't exist
     with app.app_context():
-        init_db()
+        db = get_db()
+        try:
+            # Check if jobs table exists
+            db.execute('SELECT 1 FROM jobs LIMIT 1')
+        except:
+            # Table doesn't exist, initialize database
+            init_db()

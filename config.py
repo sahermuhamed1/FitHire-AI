@@ -9,6 +9,15 @@ class Config:
     MAX_JOBS_PER_SOURCE = 50
     REQUEST_TIMEOUT = 30
     RATE_LIMIT = "200/hour"
+    
+    # Add Session configuration
+    SESSION_TYPE = 'filesystem'
+    SESSION_PERMANENT = True
+    PERMANENT_SESSION_LIFETIME = timedelta(days=7)
+    
+    # Add upload folder configuration
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app/uploads')
+    ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt'}
 
 class DevelopmentConfig(Config):
     DEBUG = True

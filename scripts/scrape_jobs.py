@@ -2,96 +2,81 @@ import os
 import sys
 import logging
 from datetime import datetime
+import click
 
 # Add parent directory to path to import app modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app import create_app
-from app.utils.linkedin_scraper import LinkedInScraper
-from app.utils.indeed_scraper import IndeedScraper
-from app.utils.glassdoor_scraper import GlassdoorScraper
-from app.utils.db_utils import get_db
+from app.utils.job_scraper import JobScraper
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)s: %(message)s',
     handlers=[
-        logging.FileHandler('scraping.log'),
+        logging.FileHandler('logs/scraping.log'),
         logging.StreamHandler()
     ]
 )
 
-def scrape_and_save_jobs():
+@click.command()
+@click.option('--keywords', '-k', default='software engineer,data scientist,full stack developer', 
+              help='Comma-separated job keywords to search for')
+@click.option('--location', '-l', default='United States', help='Job location')
+@click.option('--jobs-per-source', '-n', default=10, help='Number of jobs to fetch per source')
+def scrape_jobs(keywords, location, jobs_per_source):
+    """Scrape jobs from LinkedIn and save to database."""
     logger = logging.getLogger(__name__)
-    logger.info("Starting job scraping process")
+    logger.info(f"Starting LinkedIn job scraping for: {keywords} in {location}")
     
     app = create_app()
     with app.app_context():
         try:
-            # Initialize all scrapers
-            scrapers = {
-                'linkedin': LinkedInScraper(),
-                'indeed': IndeedScraper(),
-                'glassdoor': GlassdoorScraper()
-            }
-            
-            # Define search parameters
-            search_queries = [
-                {"keywords": "software engineer", "location": "United States"},
-                {"keywords": "data scientist", "location": "United States"},
-                {"keywords": "full stack developer", "location": "United States"}
-            ]
-            
+            scraper = JobScraper()
             total_jobs = 0
-            db = get_db()
             
-            for query in search_queries:
-                logger.info(f"Searching for: {query['keywords']} in {query['location']}")
+            # Split keywords and scrape for each keyword combination
+            for keyword in keywords.split(','):
+                keyword = keyword.strip()
+                logger.info(f"Searching for: {keyword}")
                 
-                # Try each scraper
-                for scraper_name, scraper in scrapers.items():
+                jobs = scraper.scrape_all_sources(
+                    keywords=keyword,
+                    location=location,
+                    num_jobs=jobs_per_source
+                )
+                
+                # Save jobs to database
+                from app.utils.db_utils import get_db
+                db = get_db()
+                
+                for job in jobs:
                     try:
-                        logger.info(f"Using {scraper_name} scraper...")
-                        jobs = scraper.scrape_jobs(
-                            keywords=query['keywords'],
-                            location=query['location'],
-                            num_jobs=7  # Fetch 7 jobs per scraper to get ~20 total per query
-                        )
-                        
-                        # Insert jobs into database
-                        for job in jobs:
-                            try:
-                                db.execute('''
-                                    INSERT INTO jobs (title, company, description, location, 
-                                                    application_link, posted_date, source)
-                                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                                    ON CONFLICT(application_link) DO NOTHING
-                                ''', (
-                                    job['title'],
-                                    job['company'],
-                                    job['description'],
-                                    job['location'],
-                                    job['application_link'],
-                                    job['posted_date'],
-                                    job['source']
-                                ))
-                                total_jobs += 1
-                            except Exception as e:
-                                logger.error(f"Error inserting job: {e}")
-                                continue
-                        
-                        db.commit()
-                        logger.info(f"Saved {len(jobs)} jobs from {scraper_name}")
-                        
+                        db.execute('''
+                            INSERT INTO jobs (title, company, description, location, 
+                                           application_link, posted_date, source)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)
+                            ON CONFLICT(application_link) DO NOTHING
+                        ''', (
+                            job['title'], job['company'], job['description'],
+                            job['location'], job['application_link'],
+                            job['posted_date'], job['source']
+                        ))
+                        total_jobs += 1
                     except Exception as e:
-                        logger.error(f"Error with {scraper_name} scraper: {e}")
+                        logger.error(f"Error saving job: {e}")
                         continue
-            
-            logger.info(f"Scraping completed. Total jobs saved: {total_jobs}")
+                
+                db.commit()
+                logger.info(f"Saved {total_jobs} new jobs for keyword: {keyword}")
+                
+            logger.info(f"Scraping completed. Total new jobs saved: {total_jobs}")
             
         except Exception as e:
             logger.error(f"Scraping failed: {e}")
             raise
 
 if __name__ == "__main__":
-    scrape_and_save_jobs()
+    # Create logs directory if it doesn't exist
+    os.makedirs('logs', exist_ok=True)
+    scrape_jobs()
