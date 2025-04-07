@@ -27,16 +27,35 @@ class GlassdoorScraper:
             job_listings = soup.find_all('li', class_='react-job-listing')[:num_jobs]
             
             for listing in job_listings:
-                job = {
-                    'title': listing.find('a', class_='jobLink').get_text(strip=True),
-                    'company': listing.find('div', class_='employer-name').get_text(strip=True),
-                    'location': listing.find('span', class_='loc').get_text(strip=True),
-                    'description': listing.find('div', class_='jobDescriptionContent').get_text(strip=True),
-                    'application_link': 'https://www.glassdoor.com' + listing.find('a', class_='jobLink')['href'],
-                    'posted_date': datetime.now().strftime('%Y-%m-%d')
-                }
-                jobs.append(job)
-                time.sleep(1)  # Respect rate limits
+                try:
+                    link_element = listing.find('a', class_='jobLink')
+                    if not link_element or not link_element.get('href'):
+                        continue
+
+                    application_link = 'https://www.glassdoor.com' + link_element['href']
+                    
+                    # Only create job if all required fields are present
+                    title = listing.find('a', class_='jobLink').get_text(strip=True)
+                    company = listing.find('div', class_='employer-name').get_text(strip=True)
+                    description = listing.find('div', class_='jobDescriptionContent').get_text(strip=True)
+                    
+                    if not all([title, company, description, application_link]):
+                        continue
+
+                    job = {
+                        'title': title,
+                        'company': company,
+                        'location': listing.find('span', class_='loc').get_text(strip=True),
+                        'description': description,
+                        'application_link': application_link,
+                        'posted_date': datetime.now().strftime('%Y-%m-%d'),
+                        'source': 'glassdoor'
+                    }
+                    jobs.append(job)
+                    time.sleep(1)
+                except Exception as e:
+                    print(f"Error processing job listing: {e}")
+                    continue
                 
         except Exception as e:
             print(f"Error scraping Glassdoor: {e}")

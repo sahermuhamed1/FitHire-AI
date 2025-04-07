@@ -44,6 +44,24 @@ def init_db():
         print(f"Error initializing database: {e}")
         raise
 
+def get_filtered_jobs(source=None, days=None):
+    """Get jobs filtered by source and/or date range."""
+    db = get_db()
+    query = 'SELECT * FROM jobs WHERE 1=1'
+    params = []
+    
+    if source:
+        query += ' AND source = ?'
+        params.append(source)
+    
+    if days:
+        query += ' AND date(posted_date) >= date("now", "-? days")'
+        params.append(days)
+    
+    query += ' ORDER BY posted_date DESC'
+    
+    return db.execute(query, params).fetchall()
+
 def add_sample_jobs(db):
     from app.utils.linkedin_scraper import LinkedInScraper
     from app.utils.indeed_scraper import IndeedScraper
@@ -67,7 +85,9 @@ def add_sample_jobs(db):
                     location="United States",
                     num_jobs=20  # Reduced per source to avoid overwhelming
                 )
-                all_jobs.extend(jobs)
+                # Only add jobs that have valid application links
+                valid_jobs = [job for job in jobs if job.get('application_link')]
+                all_jobs.extend(valid_jobs)
                 time.sleep(2)  # Pause between different sources
             except Exception as e:
                 print(f"Error with {scraper.__class__.__name__}: {e}")
@@ -77,16 +97,15 @@ def add_sample_jobs(db):
         for job in all_jobs:
             job_date = datetime.strptime(job.get('posted_date', current_date.strftime('%Y-%m-%d')), '%Y-%m-%d')
             if job_date >= date_45_days_ago:
-                application_link = job.get('application_link') or generate_search_link(job['title'], job['company'])
-                
                 db.execute(
-                    'INSERT INTO jobs (title, company, description, location, application_link, posted_date)'
-                    ' VALUES (?, ?, ?, ?, ?, ?)',
+                    'INSERT INTO jobs (title, company, description, location, application_link, posted_date, source)'
+                    ' VALUES (?, ?, ?, ?, ?, ?, ?)',
                     (job['title'], job['company'], job['description'], 
-                     job['location'], application_link, job_date.strftime('%Y-%m-%d'))
+                     job['location'], job['application_link'], job_date.strftime('%Y-%m-%d'),
+                     job.get('source', 'unknown'))
                 )
         db.commit()
-        print(f"Added jobs from multiple sources")
+        print(f"Added valid jobs from multiple sources")
             
     except Exception as e:
         print(f"Error adding jobs: {e}")
@@ -136,10 +155,10 @@ def add_fallback_sample_jobs(db):
         search_link = generate_search_link(title, company)
         
         db.execute(
-            'INSERT INTO jobs (title, company, description, location, skills_required, application_link, posted_date)'
-            ' VALUES (?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO jobs (title, company, description, location, skills_required, application_link, posted_date, source)'
+            ' VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
             (title, company, description, location, skills, search_link, 
-             datetime.now().strftime('%Y-%m-%d'))
+             datetime.now().strftime('%Y-%m-%d'), 'sample')
         )
     db.commit()
 

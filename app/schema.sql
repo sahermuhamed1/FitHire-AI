@@ -7,10 +7,11 @@ CREATE TABLE jobs (
     description TEXT NOT NULL,
     location TEXT,
     skills_required TEXT,
-    application_link TEXT,
+    application_link TEXT NOT NULL,  -- Make it required
     created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    posted_date TEXT NOT NULL
+    posted_date TEXT NOT NULL,
+    source TEXT NOT NULL  -- Add source tracking
 );
 
--- Remove the unique index and create a regular index
-CREATE INDEX IF NOT EXISTS idx_jobs_application_link ON jobs(application_link);
+CREATE INDEX IF NOT EXISTS idx_jobs_source ON jobs(source);
+CREATE INDEX IF NOT EXISTS idx_jobs_posted_date ON jobs(posted_date);
