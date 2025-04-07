@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Manual Resume Entry - AI Resume Matcher{% endblock %}
+{% block title %}Manual Entry - AI Resume Matcher{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -48,9 +48,6 @@
 
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Find Matching Jobs</button>
-                        <a href="{{ url_for('main.upload_resume') }}" class="btn btn-outline-secondary">
-                            Upload Resume Instead
-                        </a>
                     </div>
                 </form>
             </div>
