@@ -84,6 +84,46 @@ def upload_resume():
             
     return render_template('upload_resume.html')
 
+@bp.route('/manual_entry', methods=['GET', 'POST'])
+def manual_entry():
+    if request.method == 'POST':
+        try:
+            # Get form data
+            manual_data = {
+                'skills': request.form.get('skills', '').split(','),
+                'education': request.form.get('education', '').split(','),
+                'years_of_experience': int(request.form.get('years_experience', 0)),
+                'job_title': request.form.get('job_title', ''),
+                'industry': request.form.get('industry', ''),
+                'summary': request.form.get('summary', '')
+            }
+            
+            # Process manual entry data
+            from app.models.manual_processor import ManualProcessor
+            processor = ManualProcessor(manual_data)
+            resume_features = processor.extract_features()
+            resume_text = processor.generate_text()
+            
+            # Store in session
+            session.permanent = True
+            session['resume_text'] = resume_text
+            session['resume_features'] = resume_features
+            session['data_source'] = 'manual'
+            
+            # Match with jobs
+            job_matcher = JobMatcher()
+            job_matches = job_matcher.find_matches(resume_text, resume_features)
+            session['job_matches'] = job_matches
+            
+            return redirect(url_for('main.dashboard'))
+            
+        except Exception as e:
+            current_app.logger.error(f"Error in manual entry: {str(e)}")
+            flash(f"Error processing entry: {str(e)}")
+            return redirect(request.url)
+            
+    return render_template('manual_entry.html')
+
 @bp.route('/dashboard')
 def dashboard():
     # Retrieve saved job matches from session

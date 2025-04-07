@@ -97,3 +97,49 @@
 2025-04-07 18:06:18,374 INFO: Searching for: AI Engineer
 2025-04-07 18:06:19,267 INFO: Saved 2 new jobs for keyword: AI Engineer
 2025-04-07 18:06:19,267 INFO: Scraping completed. Total new jobs saved: 2
+2025-04-07 18:12:08,456 INFO: Starting LinkedIn job scraping for: software engineer,swe, internship, project manger,data scientist,data analyst,Ai engineer,machine learning,backend,fullstack,web developer,cs iternship,DevOps,MlOps in Egypt,Remotly,Part-time,United States
+2025-04-07 18:12:11,551 INFO: Searching for: software engineer
+2025-04-07 18:12:12,170 INFO: Saved 0 new jobs for keyword: software engineer
+2025-04-07 18:12:12,170 INFO: Searching for: swe
+2025-04-07 18:12:12,959 INFO: Saved 0 new jobs for keyword: swe
+2025-04-07 18:12:12,960 INFO: Searching for: internship
+2025-04-07 18:12:13,498 INFO: Saved 0 new jobs for keyword: internship
+2025-04-07 18:12:13,499 INFO: Searching for: project manger
+2025-04-07 18:12:18,210 INFO: Saved 2 new jobs for keyword: project manger
+2025-04-07 18:12:18,210 INFO: Searching for: data scientist
+2025-04-07 18:12:19,113 INFO: Saved 2 new jobs for keyword: data scientist
+2025-04-07 18:12:19,113 INFO: Searching for: data analyst
+2025-04-07 18:12:19,654 INFO: Saved 2 new jobs for keyword: data analyst
+2025-04-07 18:12:19,654 INFO: Searching for: Ai engineer
+2025-04-07 18:12:20,337 INFO: Saved 2 new jobs for keyword: Ai engineer
+2025-04-07 18:12:20,337 INFO: Searching for: machine learning
+2025-04-07 18:12:21,464 INFO: Saved 2 new jobs for keyword: machine learning
+2025-04-07 18:12:21,464 INFO: Searching for: backend
+2025-04-07 18:12:22,304 INFO: Saved 2 new jobs for keyword: backend
+2025-04-07 18:12:22,304 INFO: Searching for: fullstack
+2025-04-07 18:12:23,268 INFO: Saved 2 new jobs for keyword: fullstack
+2025-04-07 18:12:23,268 INFO: Searching for: web developer
+2025-04-07 18:12:24,334 INFO: Saved 2 new jobs for keyword: web developer
+2025-04-07 18:12:24,334 INFO: Searching for: cs iternship
+2025-04-07 18:12:25,131 INFO: Saved 2 new jobs for keyword: cs iternship
+2025-04-07 18:12:25,132 INFO: Searching for: DevOps
+2025-04-07 18:12:30,584 INFO: Saved 4 new jobs for keyword: DevOps
+2025-04-07 18:12:30,584 INFO: Searching for: MlOps
+2025-04-07 18:12:31,497 INFO: Saved 4 new jobs for keyword: MlOps
+2025-04-07 18:12:31,498 INFO: Scraping completed. Total new jobs saved: 4
+2025-04-07 18:12:39,508 INFO: Starting LinkedIn job scraping for: software engineer in United States
+2025-04-07 18:12:42,227 INFO: Searching for: software engineer
+2025-04-07 18:13:07,668 INFO: Saved 10 new jobs for keyword: software engineer
+2025-04-07 18:13:07,668 INFO: Scraping completed. Total new jobs saved: 10
+2025-04-07 18:15:03,000 INFO: Starting LinkedIn job scraping for: backend,data scientist,data analyst,fullstack,devops in Egypt,United States,Remotely
+2025-04-07 18:15:05,749 INFO: Searching for: backend
+2025-04-07 18:15:29,822 INFO: Saved 10 new jobs for keyword: backend
+2025-04-07 18:15:29,823 INFO: Searching for: data scientist
+2025-04-07 18:15:55,292 INFO: Saved 20 new jobs for keyword: data scientist
+2025-04-07 18:15:55,292 INFO: Searching for: data analyst
+2025-04-07 18:16:18,871 INFO: Saved 30 new jobs for keyword: data analyst
+2025-04-07 18:16:18,871 INFO: Searching for: fullstack
+2025-04-07 18:16:42,162 INFO: Saved 40 new jobs for keyword: fullstack
+2025-04-07 18:16:42,163 INFO: Searching for: devops
+2025-04-07 18:17:06,419 INFO: Saved 50 new jobs for keyword: devops
+2025-04-07 18:17:06,419 INFO: Scraping completed. Total new jobs saved: 50
