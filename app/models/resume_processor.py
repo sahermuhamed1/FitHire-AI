@@ -1,8 +1,8 @@
 import re
 import nltk
+import spacy
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
-import spacy
 from app.utils.text_extractor import extract_text
 
 # Download necessary NLTK data
@@ -15,13 +15,12 @@ except LookupError:
 
 # Try to load spacy model, fall back to smaller one if needed
 try:
-    nlp = spacy.load("en_core_web_md")
+    nlp = spacy.load("en_core_web_sm")
 except OSError:
-    try:
-        nlp = spacy.load("en_core_web_sm")
-    except OSError:
-        print("Spacy models not found. Please install using: python -m spacy download en_core_web_sm")
-        nlp = None
+    print("Downloading spaCy model...")
+    import subprocess
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+    nlp = spacy.load("en_core_web_sm")
 
 class ResumeProcessor:
     def __init__(self, file_path):

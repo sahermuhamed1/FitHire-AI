@@ -8,10 +8,8 @@ def create_app(test_config=None):
     app.config.from_object(Config)
     
     if test_config:
-        # Load the test config if passed in
         app.config.from_mapping(test_config)
     
-    # Ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)
     except OSError:
@@ -20,6 +18,9 @@ def create_app(test_config=None):
     # Register routes
     from app import routes
     app.register_blueprint(routes.bp)
+    
+    # Add URL rule for the index page
+    app.add_url_rule('/', endpoint='index')
     
     # Initialize database
     from app.utils import db_utils

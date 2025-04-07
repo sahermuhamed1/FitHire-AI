@@ -19,6 +19,11 @@ def allowed_file(filename):
 def index():
     return render_template('index.html')
 
+# add a route for the home page
+@bp.route('/home')
+def home():
+    return redirect(url_for('main.index')) # this is a placeholder
+
 @bp.route('/upload_resume', methods=('GET', 'POST'))
 def upload_resume():
     if request.method == 'POST':
