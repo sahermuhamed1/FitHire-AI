@@ -13,14 +13,22 @@ except LookupError:
     nltk.download('punkt')
     nltk.download('stopwords')
 
-# Try to load spacy model, fall back to smaller one if needed
+# Initialize spaCy with better error handling
 try:
     nlp = spacy.load("en_core_web_sm")
 except OSError:
     print("Downloading spaCy model...")
-    import subprocess
-    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
-    nlp = spacy.load("en_core_web_sm")
+    try:
+        import subprocess
+        result = subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"], 
+                              capture_output=True, text=True, check=True)
+        print(result.stdout)
+        nlp = spacy.load("en_core_web_sm")
+    except Exception as e:
+        print(f"Error installing spaCy model: {e}")
+        print("Please run: python -m spacy download en_core_web_sm")
+        # Fallback to basic processing if spaCy fails
+        nlp = None
 
 class ResumeProcessor:
     def __init__(self, file_path):
