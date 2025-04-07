@@ -4,6 +4,7 @@ from flask import current_app, g
 from flask.cli import with_appcontext
 import os
 from datetime import datetime, timedelta
+from .job_scraper import JobScraper
 
 def get_db():
     if 'db' not in g:
@@ -63,78 +64,33 @@ def get_filtered_jobs(source=None, days=None):
     return db.execute(query, params).fetchall()
 
 def add_sample_jobs(db):
-    from app.utils.linkedin_scraper import LinkedInScraper
-    from app.utils.indeed_scraper import IndeedScraper
-    from app.utils.glassdoor_scraper import GlassdoorScraper
-    
     current_date = datetime.now()
-    date_45_days_ago = current_date - timedelta(days=45)
-    
-    scrapers = [
-        LinkedInScraper(),
-        IndeedScraper(),
-        GlassdoorScraper()
-    ]
+    date_15_days_ago = current_date - timedelta(days=15)
     
     try:
-        all_jobs = []
-        for scraper in scrapers:
-            try:
-                jobs = scraper.scrape_jobs(
-                    keywords="software engineer OR data scientist OR developer",
-                    location="United States",
-                    num_jobs=20  # Reduced per source to avoid overwhelming
-                )
-                # Only add jobs that have valid application links
-                valid_jobs = [job for job in jobs if job.get('application_link')]
-                all_jobs.extend(valid_jobs)
-                time.sleep(2)  # Pause between different sources
-            except Exception as e:
-                print(f"Error with {scraper.__class__.__name__}: {e}")
-                continue
+        # Use the new job scraper
+        scraper = JobScraper()
+        jobs = scraper.scrape_all_sources(
+            keywords="software engineer OR data scientist OR developer",
+            location="United States",
+            num_jobs=20
+        )
         
-        # Filter and insert scraped jobs within last 45 days
-        for job in all_jobs:
-            job_date = datetime.strptime(job.get('posted_date', current_date.strftime('%Y-%m-%d')), '%Y-%m-%d')
-            if job_date >= date_45_days_ago:
+        # Insert jobs
+        for job in jobs:
+            if all([job.get('title'), job.get('company'), job.get('description'), job.get('application_link')]):
                 db.execute(
                     'INSERT INTO jobs (title, company, description, location, application_link, posted_date, source)'
                     ' VALUES (?, ?, ?, ?, ?, ?, ?)',
                     (job['title'], job['company'], job['description'], 
-                     job['location'], job['application_link'], job_date.strftime('%Y-%m-%d'),
-                     job.get('source', 'unknown'))
+                     job['location'], job['application_link'], job['posted_date'], job['source'])
                 )
         db.commit()
-        print(f"Added valid jobs from multiple sources")
+        print(f"Added {len(jobs)} jobs from multiple sources")
             
     except Exception as e:
         print(f"Error adding jobs: {e}")
         add_fallback_sample_jobs(db)
-    
-    # Add sample jobs with recent dates
-    sample_jobs = [
-        ('Software Engineer', 'TechCorp Inc.', 'We are looking for a software engineer with experience in Python, Flask, and SQL. The ideal candidate will have 3+ years of experience in web development and be comfortable working in a fast-paced environment.', 'San Francisco, CA', 'Python, Flask, SQL, Git'),
-        ('Data Scientist', 'DataAnalytics Co.', 'Seeking a data scientist with strong background in machine learning, NLP, and data visualization. Must be proficient in Python, PyTorch or TensorFlow, and have experience with large datasets.', 'Remote', 'Python, ML, NLP, PyTorch, SQL'),
-        ('Frontend Developer', 'WebUI Systems', 'Frontend developer needed for our growing team. Experience with React, TypeScript, and modern CSS frameworks required. Knowledge of UI/UX principles a plus.', 'Boston, MA', 'JavaScript, TypeScript, React, CSS, HTML'),
-        ('DevOps Engineer', 'CloudNative Ltd', 'Looking for a DevOps engineer to help build and maintain our cloud infrastructure. Experience with AWS, Docker, and CI/CD pipelines is essential.', 'Seattle, WA', 'AWS, Docker, Kubernetes, CI/CD, Linux'),
-        ('Product Manager', 'ProductSuite Inc.', 'Experienced product manager needed to lead development of our SaaS platform. Must have experience in agile methodologies and a technical background.', 'New York, NY', 'Agile, Jira, Product Development, SaaS'),
-        ('Full Stack Developer', 'WebStack Solutions', 'Full stack developer needed with experience in Node.js and React. Should be comfortable with both frontend and backend development.', 'Austin, TX', 'JavaScript, Node.js, React, MongoDB, Express'),
-        ('AI Research Engineer', 'AI Innovations', 'Research engineer needed for cutting-edge AI projects. PhD in machine learning or related field preferred. Experience with NLP models a plus.', 'Pittsburgh, PA', 'Python, PyTorch, NLP, Research'),
-        ('UX/UI Designer', 'DesignThink Co.', 'Creative designer needed for our product team. Experience with Figma and Adobe suite required. Portfolio must demonstrate strong UI/UX skills.', 'Los Angeles, CA', 'Figma, Adobe XD, UI Design, User Research'),
-        ('Mobile Developer', 'AppWorks Inc.', 'Looking for a mobile developer with experience in React Native or Flutter. Must be able to build and deploy cross-platform mobile applications.', 'Chicago, IL', 'React Native, Flutter, JavaScript, Mobile Development'),
-        ('Machine Learning Engineer', 'ML Technologies', 'Machine learning engineer needed to develop and deploy ML models. Experience with Python, scikit-learn, and model deployment required.', 'Denver, CO', 'Python, scikit-learn, TensorFlow, ML Ops')
-    ]
-    
-    # Distribute sample jobs over the last 45 days
-    days_interval = 45 // len(sample_jobs)
-    for i, job in enumerate(sample_jobs):
-        job_date = current_date - timedelta(days=i*days_interval)
-        db.execute(
-            'INSERT INTO jobs (title, company, description, location, skills_required, posted_date)'
-            ' VALUES (?, ?, ?, ?, ?, ?)',
-            job + (job_date.strftime('%Y-%m-%d'),)
-        )
-    db.commit()
 
 def add_fallback_sample_jobs(db):
     def generate_search_link(title, company):

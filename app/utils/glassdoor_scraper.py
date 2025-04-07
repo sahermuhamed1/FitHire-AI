@@ -1,63 +1,69 @@
-import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class GlassdoorScraper:
     def __init__(self):
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
+        chrome_options = Options()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        self.driver = webdriver.Chrome(options=chrome_options)
         
     def scrape_jobs(self, keywords, location, num_jobs=10):
         jobs = []
-        base_url = "https://www.glassdoor.com/Job/jobs.htm"
+        base_url = f"https://www.glassdoor.com/Job/jobs.htm?sc.keyword={keywords}&locT=N&locId={location}"
         
         try:
-            params = {
-                'sc.keyword': keywords,
-                'locT': 'C',
-                'locId': location,
-                'sort.type': 'DATE_DESC'
-            }
+            self.driver.get(base_url)
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "job-search-card"))
+            )
             
-            response = requests.get(base_url, params=params, headers=self.headers)
-            soup = BeautifulSoup(response.text, 'html.parser')
+            job_cards = self.driver.find_elements(By.CLASS_NAME, "job-search-card")[:num_jobs]
             
-            job_listings = soup.find_all('li', class_='react-job-listing')[:num_jobs]
-            
-            for listing in job_listings:
+            for card in job_cards:
                 try:
-                    link_element = listing.find('a', class_='jobLink')
-                    if not link_element or not link_element.get('href'):
-                        continue
-
-                    application_link = 'https://www.glassdoor.com' + link_element['href']
+                    title = card.find_element(By.CLASS_NAME, "job-title").text
+                    company = card.find_element(By.CLASS_NAME, "employer-name").text
+                    link = card.find_element(By.TAG_NAME, "a").get_attribute("href")
                     
-                    # Only create job if all required fields are present
-                    title = listing.find('a', class_='jobLink').get_text(strip=True)
-                    company = listing.find('div', class_='employer-name').get_text(strip=True)
-                    description = listing.find('div', class_='jobDescriptionContent').get_text(strip=True)
-                    
-                    if not all([title, company, description, application_link]):
+                    if not all([title, company, link]):
                         continue
-
+                        
                     job = {
                         'title': title,
                         'company': company,
-                        'location': listing.find('span', class_='loc').get_text(strip=True),
-                        'description': description,
-                        'application_link': application_link,
+                        'location': card.find_element(By.CLASS_NAME, "location").text,
+                        'description': self._get_description(link),
+                        'application_link': link,
                         'posted_date': datetime.now().strftime('%Y-%m-%d'),
                         'source': 'glassdoor'
                     }
                     jobs.append(job)
                     time.sleep(1)
+                    
                 except Exception as e:
-                    print(f"Error processing job listing: {e}")
+                    print(f"Error processing Glassdoor job: {e}")
                     continue
-                
+                    
         except Exception as e:
             print(f"Error scraping Glassdoor: {e}")
+        finally:
+            self.driver.quit()
             
         return jobs
+        
+    def _get_description(self, url):
+        try:
+            self.driver.get(url)
+            description = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "jobDescriptionContent"))
+            )
+            return description.text
+        except:
+            return ""

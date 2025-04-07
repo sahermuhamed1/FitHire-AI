@@ -1,43 +1,69 @@
-import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class IndeedScraper:
     def __init__(self):
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
+        chrome_options = Options()
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        self.driver = webdriver.Chrome(options=chrome_options)
         
     def scrape_jobs(self, keywords, location, num_jobs=10):
         jobs = []
-        base_url = "https://www.indeed.com/jobs"
+        base_url = f"https://www.indeed.com/jobs?q={keywords}&l={location}&sort=date"
         
         try:
-            params = {
-                'q': keywords,
-                'l': location,
-                'sort': 'date'
-            }
+            self.driver.get(base_url)
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "job_seen_beacon"))
+            )
             
-            response = requests.get(base_url, params=params, headers=self.headers)
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            job_cards = soup.find_all('div', class_='job_seen_beacon')[:num_jobs]
+            job_cards = self.driver.find_elements(By.CLASS_NAME, "job_seen_beacon")[:num_jobs]
             
             for card in job_cards:
-                job = {
-                    'title': card.find('h2', class_='jobTitle').get_text(strip=True),
-                    'company': card.find('span', class_='companyName').get_text(strip=True),
-                    'location': card.find('div', class_='companyLocation').get_text(strip=True),
-                    'description': card.find('div', class_='job-snippet').get_text(strip=True),
-                    'application_link': 'https://www.indeed.com' + card.find('a')['href'],
-                    'posted_date': datetime.now().strftime('%Y-%m-%d')  # Indeed shows relative dates, using current date
-                }
-                jobs.append(job)
-                time.sleep(1)  # Respect rate limits
-                
+                try:
+                    title = card.find_element(By.CLASS_NAME, "jobTitle").text
+                    company = card.find_element(By.CLASS_NAME, "companyName").text
+                    link = card.find_element(By.CLASS_NAME, "jcs-JobTitle").get_attribute("href")
+                    
+                    if not all([title, company, link]):
+                        continue
+                        
+                    job = {
+                        'title': title,
+                        'company': company,
+                        'location': card.find_element(By.CLASS_NAME, "companyLocation").text,
+                        'description': self._get_description(link),
+                        'application_link': link,
+                        'posted_date': datetime.now().strftime('%Y-%m-%d'),
+                        'source': 'indeed'
+                    }
+                    jobs.append(job)
+                    time.sleep(1)
+                    
+                except Exception as e:
+                    print(f"Error processing Indeed job: {e}")
+                    continue
+                    
         except Exception as e:
             print(f"Error scraping Indeed: {e}")
+        finally:
+            self.driver.quit()
             
         return jobs
+        
+    def _get_description(self, url):
+        try:
+            self.driver.get(url)
+            description = WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.ID, "jobDescriptionText"))
+            )
+            return description.text
+        except:
+            return ""
