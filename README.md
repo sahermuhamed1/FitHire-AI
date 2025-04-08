@@ -1,17 +1,17 @@
 # FitHire AI
 
-An AI-powered job matching platform that helps job seekers find relevant positions by analyzing resumes and matching them with job listings from various sources including LinkedIn.
+An AI powered job matching platform that helps you find relevant job positions by analyzing resumes and matching the data in it with existing jobs from various job sources.
 
-## Features
+## 💫Features
 
 - **AI Resume Analysis**: Extract skills, education, and experience from PDF/DOCX resumes
 - **Smart Job Matching**: TF-IDF based matching algorithm for accurate job recommendations
-- **Multi-Source Job Scraping**: Integrated scrapers for LinkedIn and other job sites
-- **Manual Profile Entry**: Option to manually input professional details
+- **Multi-Source Job Scraping**: Integrated scrapers for LinkedIn and other job site (will be implemented in the future)
+- **Manual Profile Entry**: Option to manually input professional details instead of upload the resume
 - **Simple Interface**: Clean Bootstrap-based UI with mobile responsiveness
 - **Privacy Focused**: Local processing with no third-party data sharing
 
-## Technology Stack
+## ✅Technology Stack
 
 - **Backend**: Python 3.8+, Flask 2.0.1
 - **Database**: SQLite3
@@ -20,7 +20,7 @@ An AI-powered job matching platform that helps job seekers find relevant positio
 - **Job Scraping**: Selenium, BeautifulSoup4
 - **Text Processing**: pdfminer.six, docx2txt
 
-## Project Structure
+## 👾Project Structure
 
 ```
 FitHire-AI/
@@ -56,45 +56,8 @@ FitHire-AI/
 └── run.py
 ```
 
-## Installation
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd FitHire-AI
-```
-
-2. Create and activate virtual environment:
-```bash
-python -m venv venv
-# Windows
-venv\Scripts\activate
-# Unix/macOS
-source venv/bin/activate
-```
-
-3. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4. Setup environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your settings
-```
-
-5. Initialize database:
-```bash
-flask init-db
-```
-
-6. Run the application:
-```bash
-python run.py
-```
-
-## Usage
+## 🧐Usage
 
 1. **Resume Upload**:
    - Navigate to Upload Resume page
@@ -111,28 +74,9 @@ python run.py
    - Results ranked by relevance
    - Click job listings for details
 
-## Development
 
-### Setup Development Environment
 
-```bash
-# Install dev dependencies
-pip install -r requirements.txt
-
-# Initialize database
-flask init-db
-
-# Run development server
-flask run --debug
-```
-
-### Running Tests
-
-```bash
-pytest
-```
-
-## Contributing
+## 🧑‍💻Contributing
 
 1. Fork the repository
 2. Create feature branch (`git checkout -b feature/feature-name`)
@@ -140,11 +84,8 @@ pytest
 4. Push to branch (`git push origin feature/feature-name`)
 5. Create Pull Request
 
-## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-# FitHire AI - Setup Guide
+# 🛜FitHire AI - Setup Guide
 
 ## Prerequisites
 1. Install Docker Desktop from https://www.docker.com/products/docker-desktop
@@ -152,7 +93,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Setup Steps
 
-### Option 1: Using docker-compose (Recommended)
+### 1️⃣Option 1: Using docker-compose (Recommended)
 
 1. Clone the repository or copy the project files to your local machine
 2. Open a terminal in the project directory
@@ -162,7 +103,7 @@ docker-compose up -d
 ```
 4. The application will be available at http://localhost:8000
 
-### Option 2: Using Docker directly
+### 2️⃣Option 2: Using Docker directly
 
 1. Clone the repository or copy the project files
 2. Build the Docker image:
@@ -205,15 +146,15 @@ docker-compose logs -f
 docker logs -f fithire-ai
 ```
 
-## Common Issues
+## ⚠️Common Issues
 
-1. **Port already in use**: If port 8000 is already being used, modify the port mapping in docker-compose.yml or the docker run command to use a different port (e.g., 8001:8000)
+1. **Port already in use**: If port 8000 is already being used by another app, modify the port mapping in docker-compose.yml or the docker run command to use a different port (e.g., 8001:8000)
 
 2. **Permission issues**: Ensure Docker has permissions to access the mounted volumes. You may need to run commands with sudo on Linux.
 
 3. **Docker not running**: Make sure Docker Desktop is running before executing any Docker commands.
 
-## Directory Structure
+## 📶Directory Structure
 The following directories will be created and mounted into the container:
 - `instance/`: Contains the SQLite database
 - `logs/`: Application logs
