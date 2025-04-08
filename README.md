@@ -154,6 +154,12 @@ docker logs -f fithire-ai
 
 3. **Docker not running**: Make sure Docker Desktop is running before executing any Docker commands.
 
+4. **No Exiting Jobs**: This will happen if it's your first time to run the application and to avoid this run the following bash command before running the application to scrape for a jobs using some job positions key words:
+
+```bash
+python scripts/scrape_jobs.py --keywords "backend,data scientist,data analyst,fullstack,devops,AI Engineer,HR" --location "Egypt,United States,Remotely" --jobs-per-source 20
+```
+
 ## 📶Directory Structure
 The following directories will be created and mounted into the container:
 - `instance/`: Contains the SQLite database
