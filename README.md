@@ -143,3 +143,80 @@ pytest
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+# FitHire AI - Setup Guide
+
+## Prerequisites
+1. Install Docker Desktop from https://www.docker.com/products/docker-desktop
+2. Make sure Docker is running on your system
+
+## Setup Steps
+
+### Option 1: Using docker-compose (Recommended)
+
+1. Clone the repository or copy the project files to your local machine
+2. Open a terminal in the project directory
+3. Run the following command:
+```bash
+docker-compose up -d 
+```
+4. The application will be available at http://localhost:8000
+
+### Option 2: Using Docker directly
+
+1. Clone the repository or copy the project files
+2. Build the Docker image:
+```bash
+docker build -t fithire-ai .
+```
+3. Run the container:
+```bash
+docker run -d -p 8000:8000 \
+  -v ./instance:/app/instance \
+  -v ./logs:/app/logs \
+  -v ./uploads:/app/uploads \
+  --name fithire-ai \
+  fithire-ai
+```
+4. Access the application at http://localhost:8000
+
+## Stopping the Application
+
+### For docker-compose:
+```bash
+docker-compose down
+```
+
+### For Docker:
+```bash
+docker stop fithire-ai
+docker rm fithire-ai
+```
+
+## Viewing Logs
+
+### For docker-compose:
+```bash
+docker-compose logs -f
+```
+
+### For Docker:
+```bash
+docker logs -f fithire-ai
+```
+
+## Common Issues
+
+1. **Port already in use**: If port 8000 is already being used, modify the port mapping in docker-compose.yml or the docker run command to use a different port (e.g., 8001:8000)
+
+2. **Permission issues**: Ensure Docker has permissions to access the mounted volumes. You may need to run commands with sudo on Linux.
+
+3. **Docker not running**: Make sure Docker Desktop is running before executing any Docker commands.
+
+## Directory Structure
+The following directories will be created and mounted into the container:
+- `instance/`: Contains the SQLite database
+- `logs/`: Application logs
+- `uploads/`: Uploaded resume files
+
+Make sure these directories exist and have proper write permissions.
