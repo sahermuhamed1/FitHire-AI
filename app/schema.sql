@@ -33,5 +33,6 @@ CREATE INDEX IF NOT EXISTS idx_jobs_source ON jobs(source);
 CREATE INDEX IF NOT EXISTS idx_jobs_posted_date ON jobs(posted_date);
 
 -- Insert default admin user (password: admin123)
+-- This hash is generated with Werkzeug's generate_password_hash function
 INSERT OR IGNORE INTO users (username, email, password_hash, is_admin)
-VALUES ('admin', 'admin@fithire.com', 'pbkdf2:sha256:150000$vFj3SkRn$c076d2b9972c9153316315bd3c52273a484a34f087051842b09be13bc32aa0a2', 1);
+VALUES ('admin', 'admin@fithire.com', 'pbkdf2:sha256:260000:UOk3XbrzsqBvC5Ab:0f8b239cf3e0574c9f363da6381822c909d42431cf006994b05c4f98cacd3839', 1);
