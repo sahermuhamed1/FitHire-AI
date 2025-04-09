@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Profile - FitHire AI{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="card-title mb-0">Your Profile</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Account Information</h4>
+                        <p><strong>Username:</strong> {{ user.username }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Account Type:</strong> {% if user.is_admin %}Administrator{% else %}User{% endif %}</p>
+                        <p><small class="text-muted">You can update your profile information here.</small></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Account Options</h4>
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('main.upload_resume') }}" class="btn btn-primary">Upload Resume</a>
+                            <a href="{{ url_for('main.manual_entry') }}" class="btn btn-outline-primary">Manual Resume Entry</a>
+                            {% if user.is_admin %}
+                            <a href="{{ url_for('main.upload_jobs') }}" class="btn btn-outline-success">Admin Dashboard</a>
+                            {% endif %}
+                            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger">Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h3 class="card-title mb-0">Resume Analysis</h3>
+            </div>
+            <div class="card-body">
+                {% if session.get('resume_features') %}
+                <div class="alert alert-info">
+                    You have an active resume in the system.
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-sm btn-primary ms-2">View Job Matches</a>
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    You haven't uploaded a resume yet. Upload your resume to find job matches!
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
