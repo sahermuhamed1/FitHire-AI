@@ -1,7 +1,9 @@
 import os
+import logging
 from flask import Flask
-from flask_session import Session  # This import will now work correctly
+from flask_session import Session
 from flask_cors import CORS
+from flask_login import LoginManager
 
 def create_app(config_class=None):
     # Create and configure the app
@@ -61,6 +63,19 @@ CREATE INDEX IF NOT EXISTS idx_jobs_source ON jobs(source);
 CREATE INDEX IF NOT EXISTS idx_jobs_posted_date ON jobs(posted_date);
             '''.strip())
 
+    # Initialize Flask-Login
+    login_manager = LoginManager()
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message_category = 'info'
+    login_manager.init_app(app)
+    
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.utils.db_utils import get_db
+        from app.models.user import User
+        db = get_db()
+        return User.get_by_id(int(user_id), db)
+    
     # Initialize database
     from app.utils import db_utils
     db_utils.init_app(app)
@@ -68,5 +83,9 @@ CREATE INDEX IF NOT EXISTS idx_jobs_posted_date ON jobs(posted_date);
     # Register routes
     from app import routes
     app.register_blueprint(routes.bp)
+    
+    # Register auth blueprint
+    from app import auth
+    app.register_blueprint(auth.bp)
     
     return app
