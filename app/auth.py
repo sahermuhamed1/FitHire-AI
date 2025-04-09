@@ -67,10 +67,15 @@ def login():
         db = get_db()
         error = None
         
+        # First try with email
         user = User.get_by_email(email, db)
         
+        # If not found, try with username (for admin logins)
         if user is None:
-            error = 'Incorrect email address.'
+            user = User.get_by_username(email, db)
+        
+        if user is None:
+            error = 'Incorrect email or username.'
         elif not user.check_password(password):
             error = 'Incorrect password.'
         
