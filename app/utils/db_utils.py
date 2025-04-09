@@ -5,6 +5,7 @@ from flask.cli import with_appcontext
 import os
 from datetime import datetime, timedelta
 from .job_scraper import JobScraper
+from werkzeug.security import generate_password_hash
 
 def get_db():
     if 'db' not in g:
@@ -123,6 +124,36 @@ def init_db_command():
     init_db()
     click.echo('Initialized the database.')
 
+@click.command('reset-admin')
+@click.option('--password', default='admin123', help='New admin password')
+@with_appcontext
+def reset_admin_command(password):
+    """Reset the admin password."""
+    db = get_db()
+    password_hash = generate_password_hash(password)
+    
+    try:
+        # Check if admin exists
+        admin = db.execute('SELECT 1 FROM users WHERE username = ?', ('admin',)).fetchone()
+        
+        if admin:
+            # Update existing admin
+            db.execute('UPDATE users SET password_hash = ? WHERE username = ?', 
+                      (password_hash, 'admin'))
+            click.echo(f'Admin password updated. Username: admin, Password: {password}')
+        else:
+            # Create new admin
+            db.execute(
+                'INSERT INTO users (username, email, password_hash, is_admin) VALUES (?, ?, ?, ?)',
+                ('admin', 'admin@fithire.com', password_hash, 1)
+            )
+            click.echo(f'Admin user created. Username: admin, Password: {password}')
+        
+        db.commit()
+    except Exception as e:
+        click.echo(f'Error resetting admin password: {e}')
+        db.rollback()
+
 def verify_db_tables():
     """Verify that required tables exist or reinitialize if they don't."""
     db = get_db()
@@ -140,6 +171,7 @@ def init_app(app):
     """Register database functions with the Flask app."""
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+    app.cli.add_command(reset_admin_command)
     
     # Initialize database when app starts
     with app.app_context():
