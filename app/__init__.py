@@ -39,11 +39,11 @@ def create_app(config_class=None):
     # Create required directories
     os.makedirs('logs', exist_ok=True)
     os.makedirs('app/uploads', exist_ok=True)
-    os.makedirs('instance', exist_ok=True)
+    os.makedirs('instance', exist_ok=True) # to hold the SQLite database 
     
     # Copy schema.sql to app directory if it doesn't exist
     schema_path = os.path.join(app.root_path, 'schema.sql')
-    if not os.path.exists(schema_path):
+    if not os.path.exists(schema_path): # If the schema file doesn't exist, create it
         with open(schema_path, 'w') as f:
             f.write('''
 DROP TABLE IF EXISTS jobs;

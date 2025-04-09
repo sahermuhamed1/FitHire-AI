@@ -11,17 +11,16 @@ class User(UserMixin):
     
     @staticmethod
     def create(username, email, password, is_admin=False):
-        """Create a new user with hashed password"""
-        password_hash = generate_password_hash(password)
+        # Create a new user 
+        password_hash = generate_password_hash(password)# hash the password
         return User(None, username, email, password_hash, is_admin)
         
     def check_password(self, password):
-        """Validate password against stored hash"""
         return check_password_hash(self.password_hash, password)
     
     @staticmethod
     def get_by_id(user_id, db):
-        """Retrieve user by ID"""
+        # Retrieve user by ID
         user = db.execute(
             'SELECT * FROM users WHERE id = ?', (user_id,)
         ).fetchone()
@@ -39,7 +38,7 @@ class User(UserMixin):
         
     @staticmethod
     def get_by_email(email, db):
-        """Retrieve user by email"""
+        # Retrieve user by email
         user = db.execute(
             'SELECT * FROM users WHERE email = ?', (email,)
         ).fetchone()
@@ -57,7 +56,7 @@ class User(UserMixin):
         
     @staticmethod
     def get_by_username(username, db):
-        """Retrieve user by username"""
+        # Retrieve user by username
         user = db.execute(
             'SELECT * FROM users WHERE username = ?', (username,)
         ).fetchone()

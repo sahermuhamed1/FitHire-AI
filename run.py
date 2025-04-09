@@ -6,7 +6,7 @@ from logging.handlers import RotatingFileHandler
 import click
 
 def setup_logging(app):
-    if not os.path.exists('logs'):
+    if not os.path.exists('logs'): # Check if logs directory exists
         os.mkdir('logs')
         
     file_handler = RotatingFileHandler(
