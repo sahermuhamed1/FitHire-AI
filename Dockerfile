@@ -14,8 +14,9 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements first to leverage Docker cache
 COPY requirements.txt .
 
+RUN pip install --upgrade pip
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Download NLTK data
 RUN python -m nltk.downloader punkt stopwords
@@ -38,4 +39,4 @@ ENV PYTHONPATH=/app
 EXPOSE 8000
 
 # Run the application with Waitress
-CMD ["python", "-m", "waitress", "--host=0.0.0.0", "--port=8000", "run:run(env='production')"]
+CMD ["python", "-m", "waitress", "--host=0.0.0.0", "--port=8000", "run:run"]

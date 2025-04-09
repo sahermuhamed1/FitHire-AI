@@ -39,6 +39,7 @@ def init_db():
         current_app.logger.info("Database initialized successfully")
     except Exception as e:
         current_app.logger.error(f"Error initializing database: {e}")
+        db.rollback()
         raise
 
 def get_filtered_jobs(source=None, days=None):
@@ -95,10 +96,11 @@ def add_fallback_sample_jobs(db):
         return f"https://www.linkedin.com/jobs/search/?keywords={search_query}"
 
     sample_jobs = [
-        # Keep your existing job data tuples but add None for application_link
-        ('Software Engineer', 'TechCorp Inc.', 'We are looking for...', 'San Francisco, CA', 'Python, Flask, SQL, Git', None),
-        ('Data Scientist', 'DataAnalytics Co.', 'Seeking a data scientist...', 'Remote', 'Python, ML, NLP, PyTorch, SQL', None),
-        # ... rest of your sample jobs ...
+        ('Software Engineer', 'TechCorp Inc.', 'We are looking for an experienced software engineer familiar with Python, Flask, and SQL. The candidate should have strong problem-solving skills and be able to work in a team environment.', 'San Francisco, CA', 'Python, Flask, SQL, Git', None),
+        ('Data Scientist', 'DataAnalytics Co.', 'Seeking a data scientist with expertise in machine learning and natural language processing. The ideal candidate will have experience with Python, PyTorch, and SQL.', 'Remote', 'Python, ML, NLP, PyTorch, SQL', None),
+        ('Full Stack Developer', 'WebSolutions LLC', 'Looking for a full stack developer with experience in React and Node.js. Should be familiar with modern web development practices and RESTful APIs.', 'New York, NY', 'JavaScript, React, Node.js, Express, MongoDB', None),
+        ('DevOps Engineer', 'CloudTech Systems', 'Seeking a DevOps engineer to help manage our cloud infrastructure. Experience with AWS, Docker, and Kubernetes is required.', 'Seattle, WA', 'AWS, Docker, Kubernetes, Terraform, Linux', None),
+        ('UI/UX Designer', 'CreativeWorks Agency', 'Looking for a talented UI/UX designer to create beautiful and intuitive user interfaces. Experience with Figma and Adobe Creative Suite is a plus.', 'Los Angeles, CA', 'UI/UX, Figma, Adobe XD, Photoshop, Illustrator', None)
     ]
     
     for job in sample_jobs:
@@ -121,17 +123,24 @@ def init_db_command():
     init_db()
     click.echo('Initialized the database.')
 
+def verify_db_tables():
+    """Verify that required tables exist or reinitialize if they don't."""
+    db = get_db()
+    try:
+        # Check if essential tables exist
+        db.execute('SELECT 1 FROM users LIMIT 1')
+        db.execute('SELECT 1 FROM jobs LIMIT 1')
+        return True
+    except sqlite3.OperationalError:
+        # Tables don't exist, initialize database
+        init_db()
+        return False
+
 def init_app(app):
     """Register database functions with the Flask app."""
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
     
-    # Initialize database when app starts if table doesn't exist
+    # Initialize database when app starts
     with app.app_context():
-        db = get_db()
-        try:
-            # Check if jobs table exists
-            db.execute('SELECT 1 FROM jobs LIMIT 1')
-        except:
-            # Table doesn't exist, initialize database
-            init_db()
+        verify_db_tables()
