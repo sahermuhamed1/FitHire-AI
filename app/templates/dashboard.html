@@ -10,6 +10,30 @@
                 <h3 class="card-title mb-0">Your Resume Analysis</h3>
             </div>
             <div class="card-body">
+                <!-- Resume quality evaluation display -->
+                {% if resume_quality %}
+                <div class="mb-3 text-center">
+                    <h5>Resume Quality</h5>
+                    {% if resume_quality == 'excellent' %}
+                    <div class="alert alert-success">
+                        <strong>Excellent</strong>
+                    </div>
+                    {% elif resume_quality == 'very good' %}
+                    <div class="alert alert-info">
+                        <strong>Very Good</strong>
+                    </div>
+                    {% elif resume_quality == 'good' %}
+                    <div class="alert alert-primary">
+                        <strong>Good</strong>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <strong>Needs Improvement</strong>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
                 <h5>Detected Skills</h5>
                 {% if resume_features.skills %}
                     <div class="mb-3">
