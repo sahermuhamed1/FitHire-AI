@@ -57,11 +57,15 @@ def upload_resume():
                 resume_text = resume_processor.extract_text()
                 resume_features = resume_processor.extract_features()
                 
+                # Evaluate resume quality
+                resume_quality = resume_processor.evaluate_resume()
+                
                 # Store in session
                 session.permanent = True
                 session['resume_text'] = resume_text
                 session['resume_features'] = resume_features
                 session['resume_path'] = file_path
+                session['resume_quality'] = resume_quality
                 
                 # Match with jobs
                 job_matcher = JobMatcher()
@@ -104,11 +108,15 @@ def manual_entry():
             resume_features = processor.extract_features()
             resume_text = processor.generate_text()
             
+            # Evaluate resume quality
+            resume_quality = processor.evaluate_resume()
+            
             # Store in session
             session.permanent = True
             session['resume_text'] = resume_text
             session['resume_features'] = resume_features
             session['data_source'] = 'manual'
+            session['resume_quality'] = resume_quality
             
             # Match with jobs
             job_matcher = JobMatcher()
@@ -129,6 +137,7 @@ def dashboard():
     # Retrieve saved job matches from session
     job_matches = session.get('job_matches', [])
     resume_features = session.get('resume_features', {})
+    resume_quality = session.get('resume_quality', None)
     
     current_app.logger.info(f"Dashboard accessed. Found {len(job_matches)} job matches in session")
     
@@ -136,7 +145,7 @@ def dashboard():
         flash('Please upload your resume first')
         return redirect(url_for('main.upload_resume'))
         
-    return render_template('dashboard.html', job_matches=job_matches, resume_features=resume_features)
+    return render_template('dashboard.html', job_matches=job_matches, resume_features=resume_features, resume_quality=resume_quality)
 
 @bp.route('/job/<int:job_id>')
 def job_detail(job_id):
