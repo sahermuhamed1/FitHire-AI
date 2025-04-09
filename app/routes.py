@@ -4,10 +4,12 @@ from flask import (
     Blueprint, flash, redirect, render_template, request, url_for, current_app, session
 )
 from werkzeug.utils import secure_filename
+from flask_login import login_required, current_user
 
 from app.utils import db_utils
 from app.models.resume_processor import ResumeProcessor
 from app.models.job_matcher import JobMatcher
+from app.auth import admin_required
 
 bp = Blueprint('main', __name__)
 
@@ -25,6 +27,7 @@ def home():
     return redirect(url_for('main.index')) # this is a placeholder
 
 @bp.route('/upload_resume', methods=('GET', 'POST'))
+@login_required
 def upload_resume():
     if request.method == 'POST':
         try:
@@ -89,6 +92,7 @@ def upload_resume():
     return render_template('upload_resume.html')
 
 @bp.route('/manual_entry', methods=['GET', 'POST'])
+@login_required
 def manual_entry():
     if request.method == 'POST':
         try:
@@ -133,6 +137,7 @@ def manual_entry():
     return render_template('manual_entry.html')
 
 @bp.route('/dashboard')
+@login_required
 def dashboard():
     # Retrieve saved job matches from session
     job_matches = session.get('job_matches', [])
@@ -148,6 +153,7 @@ def dashboard():
     return render_template('dashboard.html', job_matches=job_matches, resume_features=resume_features, resume_quality=resume_quality)
 
 @bp.route('/job/<int:job_id>')
+@login_required
 def job_detail(job_id):
     db = db_utils.get_db()
     job = db.execute('SELECT * FROM jobs WHERE id = ?', (job_id,)).fetchone()
@@ -162,9 +168,11 @@ def job_detail(job_id):
     return render_template('job_detail.html', job=job, resume_features=resume_features)
 
 @bp.route('/admin/upload_jobs', methods=('GET', 'POST'))
+@login_required
+@admin_required
 def upload_jobs():
     # A simple admin interface for manually adding job listings
-    # In a real app, you'd want proper authentication here
+    # Only accessible by admin users
     if request.method == 'POST':
         title = request.form['title']
         company = request.form['company']
@@ -197,3 +205,9 @@ def upload_jobs():
     db = db_utils.get_db()
     jobs = db.execute('SELECT id, title, company FROM jobs ORDER BY id DESC').fetchall()
     return render_template('admin/upload_jobs.html', jobs=jobs)
+
+@bp.route('/profile')
+@login_required
+def profile():
+    """User profile page"""
+    return render_template('profile.html', user=current_user)
